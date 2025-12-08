@@ -118,6 +118,41 @@ Preferred communication style: Simple, everyday language.
 - Current admin email: `abhijeet18012001@gmail.com` (hardcoded in server/routes.ts line 124 and netlify/functions/api.ts)
 - To change admin email, update the email check in both files
 
+## Vercel Deployment
+
+**Setup Steps:**
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard (Project Settings > Environment Variables):
+   - `MONGODB_URI` - Your MongoDB connection string
+   - `GMAIL_USER` - Gmail address for sending emails
+   - `GMAIL_APP_PASSWORD` - Gmail app password
+3. Deploy the site
+
+**Build Settings:**
+- Framework Preset: Vite
+- Build Command: `npm run build`
+- Output Directory: `dist/public`
+
+**Project Structure for Vercel:**
+- `api/index.ts` - Express serverless handler for API routes
+- `vercel.json` - Vercel configuration with rewrites for API routing
+- Frontend built with Vite to `dist/public`
+
+**Important Notes:**
+- File uploads are stored as base64 in MongoDB (Vercel doesn't support persistent file storage)
+- WebSockets are not supported in Vercel serverless functions
+- The API uses Express.js running as a serverless function
+- All `/api/*` routes are handled by the serverless function
+
+**API Endpoints:**
+- `POST /api/auth/login` - User authentication
+- `POST /api/images/upload` - Upload image for processing
+- `GET /api/images/user/:userId` - Get user's image requests
+- `GET /api/images/download/:requestId` - Download image
+- `GET /api/admin/requests` - Get all requests (admin)
+- `POST /api/admin/upload-edited/:requestId` - Upload edited image (admin)
+- `GET /api/health` - Health check endpoint
+
 ## Netlify Deployment
 
 **Setup Steps:**

@@ -311,7 +311,7 @@ app.post(
       const imageBuffer = req.file.buffer.toString("base64");
       const imageMimeType = req.file.mimetype;
 
-      const result = await db
+      const updatedDoc = await db
         .collection<ImageRequest>("image_requests")
         .findOneAndUpdate(
           { _id: new ObjectId(requestId) },
@@ -323,10 +323,8 @@ app.post(
               completedAt: new Date(),
             },
           },
-          { returnDocument: "after" }
+          { returnDocument: "after", includeResultMetadata: false }
         );
-
-      const updatedDoc = result;
       
       if (!updatedDoc) {
         return res.status(404).json({ message: "Request not found" });
