@@ -12,6 +12,15 @@ function isNetlifyDeployment(): boolean {
   return host.includes('netlify.app') || host.includes('netlify.com');
 }
 
+function isVercelDeployment(): boolean {
+  const host = window.location.host;
+  return host.includes('vercel.app') || host.includes('vercel.com');
+}
+
+export function isServerlessDeployment(): boolean {
+  return isNetlifyDeployment() || isVercelDeployment();
+}
+
 export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole?: 'admin' | 'user') {
   const { user } = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
@@ -20,7 +29,7 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
   const shouldReconnectRef = useRef(true);
 
   const connect = useCallback(() => {
-    if (isNetlifyDeployment()) {
+    if (isServerlessDeployment()) {
       return;
     }
     
@@ -113,5 +122,6 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
   return {
     isConnected,
     ws: wsRef.current,
+    isServerless: isServerlessDeployment(),
   };
 }

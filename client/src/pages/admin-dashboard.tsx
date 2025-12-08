@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     }
   }, [toast]);
 
-  const { isConnected } = useWebSocket(handleWebSocketMessage, 'admin');
+  const { isConnected, isServerless } = useWebSocket(handleWebSocketMessage, 'admin');
 
   const fetchRequests = useCallback(async () => {
     setIsLoading(true);
@@ -101,6 +101,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchRequests();
   }, [fetchRequests]);
+
+  // Polling fallback for serverless deployments (Vercel/Netlify)
+  useEffect(() => {
+    if (!isServerless) return;
+    
+    const pollInterval = setInterval(() => {
+      fetchRequests();
+    }, 15000); // Poll every 15 seconds
+    
+    return () => clearInterval(pollInterval);
+  }, [isServerless, fetchRequests]);
 
   const filteredRequests = requests.filter(req => 
     req.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -188,9 +199,14 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <div 
               className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50" 
-              title={isConnected ? 'Real-time updates active' : 'Reconnecting...'}
+              title={isServerless ? 'Auto-refresh every 15s' : (isConnected ? 'Real-time updates active' : 'Reconnecting...')}
             >
-              {isConnected ? (
+              {isServerless ? (
+                <>
+                  <RefreshCw className="h-3.5 w-3.5 text-blue-400" />
+                  <span className="text-xs text-blue-400 hidden sm:inline">Auto-refresh</span>
+                </>
+              ) : isConnected ? (
                 <>
                   <Wifi className="h-3.5 w-3.5 text-green-400" />
                   <span className="text-xs text-green-400 hidden sm:inline">Live</span>
