@@ -14,11 +14,23 @@ function isNetlifyDeployment(): boolean {
 
 function isVercelDeployment(): boolean {
   const host = window.location.host;
-  return host.includes('vercel.app') || host.includes('vercel.com');
+  const isVercel = host.includes('vercel.app') || host.includes('vercel.com');
+  console.log('[WebSocket] Host:', host, '| isVercel:', isVercel);
+  return isVercel;
+}
+
+function isReplitDeployment(): boolean {
+  const host = window.location.host;
+  return host.includes('replit.dev') || host.includes('repl.co');
 }
 
 export function isServerlessDeployment(): boolean {
-  return isNetlifyDeployment() || isVercelDeployment();
+  const isServerless = isNetlifyDeployment() || isVercelDeployment();
+  const isReplit = isReplitDeployment();
+  console.log('[WebSocket] isServerless:', isServerless, '| isReplit:', isReplit);
+  // If on Replit, WebSocket works, so it's not serverless
+  if (isReplit) return false;
+  return isServerless;
 }
 
 export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole?: 'admin' | 'user') {
@@ -29,20 +41,27 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
   const shouldReconnectRef = useRef(true);
 
   const connect = useCallback(() => {
-    if (isServerlessDeployment()) {
+    const serverless = isServerlessDeployment();
+    console.log('[WebSocket] connect() called, isServerless:', serverless);
+    
+    if (serverless) {
+      console.log('[WebSocket] Skipping WebSocket connection on serverless platform');
       return;
     }
     
     if (!shouldReconnectRef.current) {
+      console.log('[WebSocket] shouldReconnect is false, skipping');
       return;
     }
     
     if (wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('[WebSocket] Already connected, skipping');
       return;
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws`;
+    console.log('[WebSocket] Attempting to connect to:', wsUrl);
     
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
