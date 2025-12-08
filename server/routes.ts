@@ -11,20 +11,9 @@ import { notifyNewImageUpload, notifyImageEdited } from "./websocket";
 
 const COMMON_PASSWORD = 'duolin';
 
-const uploadStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadType = req.path.includes('/upload-edited') ? 'edited' : 'original';
-    cb(null, `uploads/${uploadType}`);
-  },
-  filename: function (req, file, cb) {
-    const uniqueId = nanoid(10);
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}-${uniqueId}${ext}`);
-  }
-});
-
+// Use memory storage for serverless compatibility (Vercel has read-only filesystem)
 const upload = multer({ 
-  storage: uploadStorage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -95,23 +84,22 @@ export async function registerRoutes(
         return res.status(400).json({ message: 'User information is required' });
       }
 
-      // Read file content and convert to base64 for cloud storage
-      const fileContent = fs.readFileSync(req.file.path);
-      const base64Content = fileContent.toString('base64');
+      // Convert buffer to base64 for cloud storage (works with memory storage)
+      const base64Content = req.file.buffer.toString('base64');
+      const uniqueId = nanoid(10);
+      const ext = path.extname(req.file.originalname);
+      const generatedFilename = `${Date.now()}-${uniqueId}${ext}`;
 
       const imageRequest = await storage.createImageRequest({
         userId,
         employeeId,
         displayName,
         originalFileName: req.file.originalname,
-        originalFilePath: req.file.path,
+        originalFilePath: `uploads/original/${generatedFilename}`,
         originalFileContent: base64Content,
         originalContentType: req.file.mimetype,
         status: 'pending',
       });
-
-      // Clean up local file after storing in MongoDB (optional for serverless)
-      // fs.unlinkSync(req.file.path);
 
       notifyNewImageUpload({
         id: imageRequest._id?.toString() || '',
@@ -276,13 +264,15 @@ export async function registerRoutes(
         return res.status(400).json({ message: 'No edited image file provided' });
       }
 
-      // Read file content and convert to base64 for cloud storage
-      const fileContent = fs.readFileSync(req.file.path);
-      const base64Content = fileContent.toString('base64');
+      // Convert buffer to base64 for cloud storage (works with memory storage)
+      const base64Content = req.file.buffer.toString('base64');
+      const uniqueId = nanoid(10);
+      const ext = path.extname(req.file.originalname);
+      const generatedFilename = `${Date.now()}-${uniqueId}${ext}`;
 
       const updatedRequest = await storage.updateImageRequest(requestId, {
         editedFileName: req.file.originalname,
-        editedFilePath: req.file.path,
+        editedFilePath: `uploads/edited/${generatedFilename}`,
         editedFileContent: base64Content,
         editedContentType: req.file.mimetype,
         status: 'completed',
