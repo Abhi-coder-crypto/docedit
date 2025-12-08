@@ -58,8 +58,12 @@ interface ImageRequest {
   displayName: string;
   originalFileName: string;
   originalFilePath: string;
+  originalFileContent?: string;
+  originalContentType?: string;
   editedFileName?: string;
   editedFilePath?: string;
+  editedFileContent?: string;
+  editedContentType?: string;
   status: "pending" | "completed";
   uploadedAt: Date;
   completedAt?: Date;
@@ -260,6 +264,78 @@ app.get("/api/images/download/:requestId", async (req, res) => {
     res.status(404).json({ message: "File format not supported" });
   } catch (error: any) {
     log(`Error downloading file: ${error.message}`, "error");
+    res.status(500).json({ message: "Failed to download file" });
+  }
+});
+
+// New download endpoint that matches main server structure
+app.get("/api/images/download-by-id/:requestId/:type", async (req, res) => {
+  try {
+    const { requestId, type } = req.params;
+
+    if (type !== "original" && type !== "edited") {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const db = await getDatabase();
+    const request = await db
+      .collection<ImageRequest>("image_requests")
+      .findOne({ _id: new ObjectId(requestId) });
+
+    if (!request) {
+      return res.status(404).json({ message: "Image request not found" });
+    }
+
+    let fileContent: string | undefined;
+    let contentType: string | undefined;
+    let fileName: string;
+
+    if (type === "original") {
+      fileContent = request.originalFileContent;
+      contentType = request.originalContentType;
+      fileName = request.originalFileName;
+    } else {
+      fileContent = request.editedFileContent;
+      contentType = request.editedContentType;
+      fileName = request.editedFileName || "edited-image";
+    }
+
+    // Try fileContent first (main server format)
+    if (fileContent) {
+      const buffer = Buffer.from(fileContent, "base64");
+      res.setHeader("Content-Type", contentType || "application/octet-stream");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${fileName}"`
+      );
+      return res.send(buffer);
+    }
+
+    // Fallback to filePath with data URI (Vercel format)
+    const filePath =
+      type === "edited" ? request.editedFilePath : request.originalFilePath;
+
+    if (filePath && filePath.startsWith("data:")) {
+      const matches = filePath.match(/^data:([^;]+);base64,(.+)$/);
+      if (matches) {
+        const mimeType = matches[1];
+        const base64Data = matches[2];
+        const buffer = Buffer.from(base64Data, "base64");
+
+        res.setHeader("Content-Type", mimeType);
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="${fileName || "image"}"`
+        );
+        return res.send(buffer);
+      }
+    }
+
+    res.status(404).json({ 
+      message: "This image was uploaded before the storage system was updated. The file content is no longer available. Please re-upload the image." 
+    });
+  } catch (error: any) {
+    log(`Error downloading file by ID: ${error.message}`, "error");
     res.status(500).json({ message: "Failed to download file" });
   }
 });
