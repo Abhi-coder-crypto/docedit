@@ -10,7 +10,7 @@ export async function initializeDatabase() {
   console.log("Created unique index on employees.employeeId");
 
   const usersCollection = db.collection('users');
-  await usersCollection.createIndex({ employeeId: 1 }, { unique: true });
+  await usersCollection.createIndex({ employeeId: 1 }, { unique: true, sparse: true });
   console.log("Created unique index on users.employeeId");
 
   const imageRequestsCollection = db.collection('image_requests');
