@@ -186,7 +186,10 @@ export async function registerRoutes(
         if (filePath && fs.existsSync(filePath)) {
           return res.download(filePath);
         }
-        return res.status(404).json({ message: 'File content not found' });
+        log(`File content not in database for request ${requestId}, type: ${type}`, 'error');
+        return res.status(404).json({ 
+          message: 'This image was uploaded before the storage system was updated. The file content is no longer available. Please re-upload the image.' 
+        });
       }
 
       const buffer = Buffer.from(fileContent, 'base64');

@@ -167,8 +167,41 @@ export default function AdminDashboard() {
     disabled: isUploading,
   });
 
-  const downloadImage = (requestId: string, type: 'original' | 'edited') => {
-    window.open(`/api/images/download-by-id/${requestId}/${type}`, '_blank');
+  const downloadImage = async (requestId: string, type: 'original' | 'edited') => {
+    try {
+      const response = await fetch(`/api/images/download-by-id/${requestId}/${type}`);
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Download failed');
+      }
+      
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `${type}-image`;
+      
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match) {
+          filename = match[1];
+        }
+      }
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      toast({
+        title: "Download Failed",
+        description: error.message || 'Failed to download image',
+        variant: "destructive",
+      });
+    }
   };
 
   const getInitials = (name: string) => {
