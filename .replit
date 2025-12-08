@@ -20,6 +20,10 @@ localPort = 37163
 externalPort = 3001
 
 [[ports]]
+localPort = 37217
+externalPort = 3003
+
+[[ports]]
 localPort = 38171
 externalPort = 3000
 
@@ -57,3 +61,10 @@ waitForPort = 5000
 [agent]
 mockupState = "FULLSTACK"
 expertMode = true
+
+[userenv]
+
+[userenv.shared]
+MONGODB_URI = "mongodb+srv://abhijeet18012001_db_user:r4FAUy153ZLzfQdu@document.vrjp2pc.mongodb.net/?appName=Document"
+GMAIL_APP_PASSWORD = "uszzekqrdvpfvszh"
+GMAIL_USER = "abhijeet18012001@gmail.com"
