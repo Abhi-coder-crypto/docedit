@@ -154,7 +154,13 @@ export async function registerRoutes(
 
   app.get('/api/images/download/:type/:filename', (req, res) => {
     try {
-      const { type, filename } = req.params;
+      const { type } = req.params;
+      let { filename } = req.params;
+      
+      // Decode URL-encoded filename
+      filename = decodeURIComponent(filename);
+      
+      log(`Download request - type: ${type}, filename: ${filename}`, 'info');
       
       if (type !== 'original' && type !== 'edited') {
         return res.status(400).json({ message: 'Invalid image type' });
@@ -162,8 +168,15 @@ export async function registerRoutes(
 
       const filePath = path.join(process.cwd(), 'uploads', type, filename);
       
+      log(`Looking for file at: ${filePath}`, 'info');
+      
       if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ message: 'File not found. It may have been deleted or moved.' });
+        log(`File not found: ${filePath}`, 'error');
+        return res.status(404).json({ 
+          message: 'File not found. It may have been deleted or moved.',
+          requestedFile: filename,
+          type: type
+        });
       }
       
       res.download(filePath);
