@@ -95,14 +95,23 @@ export async function registerRoutes(
         return res.status(400).json({ message: 'User information is required' });
       }
 
+      // Read file content and convert to base64 for cloud storage
+      const fileContent = fs.readFileSync(req.file.path);
+      const base64Content = fileContent.toString('base64');
+
       const imageRequest = await storage.createImageRequest({
         userId,
         employeeId,
         displayName,
         originalFileName: req.file.originalname,
         originalFilePath: req.file.path,
+        originalFileContent: base64Content,
+        originalContentType: req.file.mimetype,
         status: 'pending',
       });
+
+      // Clean up local file after storing in MongoDB (optional for serverless)
+      // fs.unlinkSync(req.file.path);
 
       notifyNewImageUpload({
         id: imageRequest._id?.toString() || '',
@@ -152,15 +161,65 @@ export async function registerRoutes(
     }
   });
 
+  // New route: Download by request ID from MongoDB
+  app.get('/api/images/download-by-id/:requestId/:type', async (req, res) => {
+    try {
+      const { requestId, type } = req.params;
+      
+      log(`Download by ID request - requestId: ${requestId}, type: ${type}`, 'info');
+      
+      if (type !== 'original' && type !== 'edited') {
+        return res.status(400).json({ message: 'Invalid image type' });
+      }
+
+      const imageRequest = await storage.getImageRequestById(requestId);
+      
+      if (!imageRequest) {
+        return res.status(404).json({ message: 'Image request not found' });
+      }
+
+      let fileContent: string | undefined;
+      let contentType: string | undefined;
+      let fileName: string;
+
+      if (type === 'original') {
+        fileContent = imageRequest.originalFileContent;
+        contentType = imageRequest.originalContentType;
+        fileName = imageRequest.originalFileName;
+      } else {
+        fileContent = imageRequest.editedFileContent;
+        contentType = imageRequest.editedContentType;
+        fileName = imageRequest.editedFileName || 'edited-image';
+      }
+
+      if (!fileContent) {
+        // Fallback to local file if content not in MongoDB
+        const filePath = type === 'original' ? imageRequest.originalFilePath : imageRequest.editedFilePath;
+        if (filePath && fs.existsSync(filePath)) {
+          return res.download(filePath);
+        }
+        return res.status(404).json({ message: 'File content not found' });
+      }
+
+      const buffer = Buffer.from(fileContent, 'base64');
+      res.setHeader('Content-Type', contentType || 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      res.send(buffer);
+    } catch (error: any) {
+      log(`Error downloading file by ID: ${error.message}`, 'error');
+      res.status(500).json({ message: 'Failed to download file' });
+    }
+  });
+
+  // Legacy route: Download by filename from local storage (kept for backward compatibility)
   app.get('/api/images/download/:type/:filename', (req, res) => {
     try {
       const { type } = req.params;
       let { filename } = req.params;
       
-      // Decode URL-encoded filename
       filename = decodeURIComponent(filename);
       
-      log(`Download request - type: ${type}, filename: ${filename}`, 'info');
+      log(`Legacy download request - type: ${type}, filename: ${filename}`, 'info');
       
       if (type !== 'original' && type !== 'edited') {
         return res.status(400).json({ message: 'Invalid image type' });
@@ -168,12 +227,10 @@ export async function registerRoutes(
 
       const filePath = path.join(process.cwd(), 'uploads', type, filename);
       
-      log(`Looking for file at: ${filePath}`, 'info');
-      
       if (!fs.existsSync(filePath)) {
-        log(`File not found: ${filePath}`, 'error');
+        log(`File not found locally: ${filePath}`, 'error');
         return res.status(404).json({ 
-          message: 'File not found. It may have been deleted or moved.',
+          message: 'File not found. Please use the new download endpoint with request ID.',
           requestedFile: filename,
           type: type
         });
@@ -219,9 +276,15 @@ export async function registerRoutes(
         return res.status(400).json({ message: 'No edited image file provided' });
       }
 
+      // Read file content and convert to base64 for cloud storage
+      const fileContent = fs.readFileSync(req.file.path);
+      const base64Content = fileContent.toString('base64');
+
       const updatedRequest = await storage.updateImageRequest(requestId, {
         editedFileName: req.file.originalname,
         editedFilePath: req.file.path,
+        editedFileContent: base64Content,
+        editedContentType: req.file.mimetype,
         status: 'completed',
         completedAt: new Date(),
       });

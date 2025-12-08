@@ -14,6 +14,7 @@ export interface IStorage {
   
   // Image request operations
   createImageRequest(request: Omit<ImageRequest, '_id' | 'uploadedAt'>): Promise<ImageRequest>;
+  getImageRequestById(id: string): Promise<ImageRequest | null>;
   getImageRequestsByUserId(userId: string): Promise<ImageRequest[]>;
   getAllImageRequests(): Promise<ImageRequest[]>;
   updateImageRequest(id: string, update: Partial<ImageRequest>): Promise<ImageRequest | null>;
@@ -74,6 +75,12 @@ export class MongoStorage implements IStorage {
     };
     const result = await db.collection<ImageRequest>('image_requests').insertOne(newRequest as any);
     return { ...newRequest, _id: result.insertedId };
+  }
+
+  async getImageRequestById(id: string): Promise<ImageRequest | null> {
+    const db = await getDatabase();
+    const request = await db.collection<ImageRequest>('image_requests').findOne({ _id: new ObjectId(id) });
+    return request;
   }
 
   async getImageRequestsByUserId(userId: string): Promise<ImageRequest[]> {

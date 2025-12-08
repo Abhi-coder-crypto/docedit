@@ -167,10 +167,8 @@ export default function AdminDashboard() {
     disabled: isUploading,
   });
 
-  const downloadImage = (filePath: string) => {
-    const filename = filePath.split('/').pop();
-    const type = filePath.includes('/edited/') ? 'edited' : 'original';
-    window.open(`/api/images/download/${type}/${filename}`, '_blank');
+  const downloadImage = (requestId: string, type: 'original' | 'edited') => {
+    window.open(`/api/images/download-by-id/${requestId}/${type}`, '_blank');
   };
 
   const getInitials = (name: string) => {
@@ -400,7 +398,7 @@ export default function AdminDashboard() {
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            onClick={() => downloadImage(req.originalFilePath)}
+                            onClick={() => downloadImage(req.id, 'original')}
                             className="bg-white/50 dark:bg-slate-700/50"
                             data-testid={`button-download-original-${req.id}`}
                           >
@@ -411,7 +409,7 @@ export default function AdminDashboard() {
                             <Button 
                               variant="outline" 
                               size="sm" 
-                              onClick={() => downloadImage(req.editedFilePath!)}
+                              onClick={() => downloadImage(req.id, 'edited')}
                               className="bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30 border-green-200 dark:border-green-800"
                               data-testid={`button-download-edited-${req.id}`}
                             >

@@ -26,8 +26,12 @@ export interface ImageRequest {
   displayName: string;
   originalFileName: string;
   originalFilePath: string;
+  originalFileContent?: string;
+  originalContentType?: string;
   editedFileName?: string;
   editedFilePath?: string;
+  editedFileContent?: string;
+  editedContentType?: string;
   status: 'pending' | 'completed';
   uploadedAt: Date;
   completedAt?: Date;

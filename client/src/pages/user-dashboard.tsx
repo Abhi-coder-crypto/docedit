@@ -127,10 +127,8 @@ export default function UserDashboard() {
     disabled: isUploading,
   });
 
-  const downloadFile = (filePath: string) => {
-    const filename = filePath.split('/').pop();
-    const type = filePath.includes('/edited/') ? 'edited' : 'original';
-    window.open(`/api/images/download/${type}/${filename}`, '_blank');
+  const downloadFile = (requestId: string, type: 'original' | 'edited') => {
+    window.open(`/api/images/download-by-id/${requestId}/${type}`, '_blank');
   };
 
   const pendingCount = requests.filter(r => r.status === 'pending').length;
@@ -371,7 +369,7 @@ export default function UserDashboard() {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => downloadFile(request.originalFilePath)}
+                            onClick={() => downloadFile(request.id, 'original')}
                             className="gap-2"
                             data-testid={`button-download-original-${request.id}`}
                           >
@@ -382,7 +380,7 @@ export default function UserDashboard() {
                           {request.status === 'completed' && request.editedFilePath && (
                             <Button 
                               size="sm"
-                              onClick={() => downloadFile(request.editedFilePath!)}
+                              onClick={() => downloadFile(request.id, 'edited')}
                               className="gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:opacity-90"
                               data-testid={`button-download-edited-${request.id}`}
                             >
