@@ -52,8 +52,8 @@ Preferred communication style: Simple, everyday language.
 
 **API Design:**
 - RESTful endpoints for authentication, image uploads, and request management
-- File uploads stored in local `uploads/` directory (separate folders for original and edited images)
-- OTP-based authentication flow (request OTP → verify OTP → session creation)
+- File uploads stored as base64 content in MongoDB (serverless-compatible, no filesystem dependency)
+- Employee ID + common password authentication (password: "duolin")
 
 **Data Models:**
 - **User**: Stores user information (name, email, role)
@@ -75,10 +75,12 @@ Preferred communication style: Simple, everyday language.
   - Uses cached connection pattern for serverless optimization
 
 **File Storage:**
-- **Local File System**: Images stored in `uploads/` directory
-  - `uploads/original/` - User-uploaded images
-  - `uploads/edited/` - Admin-uploaded edited images
-  - Files named with timestamp and nanoid for uniqueness
+- **MongoDB-based Storage**: Images stored as base64 strings directly in MongoDB documents
+  - `originalFileContent` - Base64-encoded original image content
+  - `editedFileContent` - Base64-encoded edited image content
+  - Content types stored alongside for proper MIME type handling
+  - Serverless-compatible: Works on Vercel and other read-only filesystem environments
+  - Uses multer memory storage (no disk writes)
 
 **Email Service:**
 - **Resend**: Integrated for sending transactional emails
