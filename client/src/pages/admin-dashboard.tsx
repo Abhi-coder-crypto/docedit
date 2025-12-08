@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     }
   }, [toast]);
 
-  const { isConnected } = useWebSocket(handleWebSocketMessage);
+  const { isConnected } = useWebSocket(handleWebSocketMessage, 'admin');
 
   const fetchRequests = useCallback(async () => {
     setIsLoading(true);

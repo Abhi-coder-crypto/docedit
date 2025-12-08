@@ -12,7 +12,7 @@ function isNetlifyDeployment(): boolean {
   return host.includes('netlify.app') || host.includes('netlify.com');
 }
 
-export function useWebSocket(onMessage?: (message: WSMessage) => void) {
+export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole?: 'admin' | 'user') {
   const { user } = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -42,13 +42,14 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void) {
       console.log('WebSocket connected');
       setIsConnected(true);
       
-      if (user) {
-        ws.send(JSON.stringify({
-          type: 'register',
-          userId: user.id,
-          role: user.role,
-        }));
-      }
+      const role = forceRole || user?.role || 'admin';
+      const userId = user?.id || 'admin-' + Date.now();
+      
+      ws.send(JSON.stringify({
+        type: 'register',
+        userId: userId,
+        role: role,
+      }));
     };
 
     ws.onmessage = (event) => {
@@ -75,12 +76,13 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void) {
     ws.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
-  }, [user, onMessage]);
+  }, [user, onMessage, forceRole]);
 
   useEffect(() => {
     shouldReconnectRef.current = true;
     
-    if (user) {
+    // Connect if user exists OR if forceRole is provided (for admin panel without auth)
+    if (user || forceRole) {
       connect();
     }
 
@@ -93,17 +95,20 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void) {
         wsRef.current.close();
       }
     };
-  }, [user, connect]);
+  }, [user, connect, forceRole]);
 
   useEffect(() => {
-    if (isConnected && user && wsRef.current?.readyState === WebSocket.OPEN) {
+    if (isConnected && wsRef.current?.readyState === WebSocket.OPEN) {
+      const role = forceRole || user?.role || 'admin';
+      const userId = user?.id || 'admin-' + Date.now();
+      
       wsRef.current.send(JSON.stringify({
         type: 'register',
-        userId: user.id,
-        role: user.role,
+        userId: userId,
+        role: role,
       }));
     }
-  }, [isConnected, user]);
+  }, [isConnected, user, forceRole]);
 
   return {
     isConnected,
