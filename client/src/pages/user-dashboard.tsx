@@ -164,9 +164,6 @@ export default function UserDashboard() {
     }
   };
 
-  const pendingCount = requests.filter(r => r.status === 'pending').length;
-  const completedCount = requests.filter(r => r.status === 'completed').length;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
       <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200/50 sticky top-0 z-50">
@@ -231,55 +228,7 @@ export default function UserDashboard() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="border-none shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <p className="text-blue-100 text-sm font-medium">Total Uploads</p>
-                    <p className="text-3xl font-bold mt-1">{requests.length}</p>
-                  </div>
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <FileImage className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="border-none shadow-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <p className="text-amber-100 text-sm font-medium">Pending</p>
-                    <p className="text-3xl font-bold mt-1">{pendingCount}</p>
-                  </div>
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <Clock className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="border-none shadow-lg bg-gradient-to-br from-green-500 to-emerald-500 text-white">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <p className="text-green-100 text-sm font-medium">Completed</p>
-                    <p className="text-3xl font-bold mt-1">{completedCount}</p>
-                  </div>
-                  <div className="p-3 bg-white/20 rounded-xl">
-                    <CheckCircle2 className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="border-none shadow-xl bg-white mb-8 overflow-hidden">
             <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-500" />
             <CardHeader>
