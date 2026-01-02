@@ -102,7 +102,8 @@ export default function AdminDashboard() {
     fetchRequests();
   }, [fetchRequests]);
 
-  // Polling fallback for serverless deployments (Vercel/Netlify)
+  // Polling fallback removed to respect user preference for manual refresh
+  /* 
   useEffect(() => {
     if (!isServerless) return;
     
@@ -112,6 +113,7 @@ export default function AdminDashboard() {
     
     return () => clearInterval(pollInterval);
   }, [isServerless, fetchRequests]);
+  */
 
   const filteredRequests = requests.filter(req => 
     req.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||

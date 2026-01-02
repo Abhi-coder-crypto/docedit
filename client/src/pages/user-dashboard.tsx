@@ -221,10 +221,12 @@ export default function UserDashboard() {
               </h1>
               <p className="text-slate-500">Upload images and track your processing requests.</p>
             </div>
-            <Button variant="outline" onClick={fetchRequests} disabled={isLoading} className="bg-white shadow-sm" data-testid="button-refresh">
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={fetchRequests} disabled={isLoading} className="bg-white shadow-sm" data-testid="button-refresh">
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+            </div>
           </motion.div>
         </div>
 
