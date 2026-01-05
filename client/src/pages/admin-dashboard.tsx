@@ -141,7 +141,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchRequests(true);
-  }, []); // Run once on mount
+
+    // Set up auto-refresh for serverless environments (Vercel/Netlify)
+    let intervalId: NodeJS.Timeout | null = null;
+    if (isServerless) {
+      console.log('[Admin] Setting up 15s auto-refresh for serverless environment');
+      intervalId = setInterval(() => {
+        fetchRequests(true);
+      }, 15000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isServerless, fetchRequests]); // Added dependencies to handle environment detection
 
   const loadMore = () => {
     if (hasMore && !isLoading) {
