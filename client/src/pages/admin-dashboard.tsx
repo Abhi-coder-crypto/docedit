@@ -162,10 +162,20 @@ export default function AdminDashboard() {
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !selectedRequest) return;
 
+    const file = acceptedFiles[0];
+    if (file.size > 500 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Maximum file size is 500KB. Please compress the edited image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsUploading(true);
     
     const formData = new FormData();
-    formData.append('editedImage', acceptedFiles[0]);
+    formData.append('editedImage', file);
 
     try {
       const response = await fetch(`/api/admin/upload-edited/${selectedRequest.id}`, {
@@ -202,6 +212,18 @@ export default function AdminDashboard() {
     accept: { 'image/*': [] },
     maxFiles: 1,
     disabled: isUploading,
+    maxSize: 500 * 1024,
+    onDropRejected: (fileRejections) => {
+      fileRejections.forEach((rejection) => {
+        if (rejection.errors.some(e => e.code === 'file-too-large')) {
+          toast({
+            title: "File too large",
+            description: "Maximum file size for edited images is 500KB. Please compress before uploading.",
+            variant: "destructive",
+          });
+        }
+      });
+    }
   });
 
   const downloadImage = async (requestId: string, type: 'original' | 'edited') => {
