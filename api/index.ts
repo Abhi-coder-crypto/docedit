@@ -342,12 +342,23 @@ app.get("/api/images/download-by-id/:requestId/:type", async (req, res) => {
 
 app.get("/api/admin/requests", async (req, res) => {
   try {
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = parseInt(req.query.offset as string) || 0;
+    
+    log(`Admin fetching requests - limit: ${limit}, offset: ${offset}`);
+    
     const db = await getDatabase();
-    const requests = await db
-      .collection<ImageRequest>("image_requests")
+    const col = db.collection<ImageRequest>("image_requests");
+    
+    const total = await col.countDocuments({});
+    const requests = await col
       .find({})
       .sort({ uploadedAt: -1 })
+      .skip(offset)
+      .limit(limit)
       .toArray();
+
+    log(`Found ${requests.length} requests out of ${total} total`);
 
     res.json({
       requests: requests.map((r) => ({
@@ -363,6 +374,10 @@ app.get("/api/admin/requests", async (req, res) => {
         uploadedAt: r.uploadedAt,
         completedAt: r.completedAt,
       })),
+      total,
+      limit,
+      offset,
+      hasMore: offset + requests.length < total
     });
   } catch (error: any) {
     log(`Error fetching all requests: ${error.message}`, "error");
