@@ -63,18 +63,21 @@ export async function connectToDatabase() {
     throw new Error('MONGODB_URI environment variable is not set');
   }
 
+  // Sanitize URI - ensure no trailing slash or characters that might break the parser
+  const sanitizedUri = uri.trim();
+
   log('Connecting to MongoDB...', 'mongodb');
   
   connectionPromise = (async () => {
     try {
-      const client = new MongoClient(uri, {
-        connectTimeoutMS: 10000,
+      const client = new MongoClient(sanitizedUri, {
+        connectTimeoutMS: 15000,
         socketTimeoutMS: 60000,
-        serverSelectionTimeoutMS: 10000,
-        maxPoolSize: 20,
-        minPoolSize: 5,
+        serverSelectionTimeoutMS: 15000,
+        maxPoolSize: 50,
+        minPoolSize: 10,
         maxIdleTimeMS: 60000,
-        waitQueueTimeoutMS: 10000,
+        waitQueueTimeoutMS: 15000,
         retryWrites: true,
         retryReads: true
       });
