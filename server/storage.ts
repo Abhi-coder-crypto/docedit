@@ -16,7 +16,7 @@ export interface IStorage {
   createImageRequest(request: Omit<ImageRequest, '_id' | 'uploadedAt'>): Promise<ImageRequest>;
   getImageRequestById(id: string): Promise<ImageRequest | null>;
   getImageRequestsByUserId(userId: string): Promise<ImageRequest[]>;
-  getAllImageRequests(): Promise<ImageRequest[]>;
+  getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number }>;
   updateImageRequest(id: string, update: Partial<ImageRequest>): Promise<ImageRequest | null>;
 }
 
@@ -92,18 +92,27 @@ export class MongoStorage implements IStorage {
     return requests;
   }
 
-  async getAllImageRequests(): Promise<ImageRequest[]> {
+  async getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number }> {
     try {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
-      const requests = await col
-        .find({})
-        .sort({ uploadedAt: -1 })
-        .toArray();
+      const total = await col.countDocuments({});
       
-      console.log(`[MongoStorage] getAllImageRequests returning ${requests.length} requests from collection 'image_requests'`);
-      return requests;
+      let query = col.find({}).sort({ uploadedAt: -1 });
+      
+      if (offset !== undefined) {
+        query = query.skip(offset);
+      }
+      
+      if (limit !== undefined) {
+        query = query.limit(limit);
+      }
+      
+      const requests = await query.toArray();
+      
+      console.log(`[MongoStorage] getAllImageRequests returning ${requests.length}/${total} requests (limit: ${limit}, offset: ${offset})`);
+      return { requests, total };
     } catch (error) {
       console.error('[MongoStorage] Error in getAllImageRequests:', error);
       throw error;

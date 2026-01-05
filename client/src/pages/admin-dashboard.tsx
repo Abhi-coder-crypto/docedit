@@ -30,8 +30,12 @@ export default function AdminDashboard() {
   const [requests, setRequests] = useState<ImageRequest[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<ImageRequest | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [totalRequests, setTotalRequests] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const LIMIT = 10;
 
   const handleWebSocketMessage = useCallback((message: WSMessage) => {
     if (message.type === 'new_image_upload') {
@@ -39,7 +43,7 @@ export default function AdminDashboard() {
       setRequests(prev => {
         const exists = prev.some(req => String(req.id) === String(newRequest.id));
         if (exists) return prev;
-        return [...prev, {
+        return [{
           id: String(newRequest.id),
           userId: String(newRequest.userId),
           employeeId: String(newRequest.employeeId),
@@ -48,8 +52,9 @@ export default function AdminDashboard() {
           originalFilePath: newRequest.originalFilePath,
           status: 'pending' as const,
           uploadedAt: newRequest.uploadedAt,
-        }];
+        }, ...prev];
       });
+      setTotalRequests(prev => prev + 1);
       toast({
         title: "New Image Upload",
         description: `${newRequest.displayName} uploaded "${newRequest.originalFileName}"`,
@@ -76,54 +81,43 @@ export default function AdminDashboard() {
 
   const { isConnected, isServerless } = useWebSocket(handleWebSocketMessage, 'admin');
 
-  const fetchRequests = useCallback(async () => {
-    if (isLoading) return; // Prevent concurrent fetches
+  const fetchRequests = useCallback(async (isInitial = true) => {
+    if (isLoading) return;
+    
     setIsLoading(true);
+    const currentOffset = isInitial ? 0 : offset;
+    
     try {
-      console.log('Fetching admin requests...');
-      const response = await fetch(`/api/admin/requests?t=${Date.now()}`, {
+      console.log(`Fetching admin requests (offset: ${currentOffset}, limit: ${LIMIT})...`);
+      const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
         }
       });
       
-      const contentType = response.headers.get('content-type');
-      
       if (!response.ok) {
-        if (contentType && contentType.includes('text/html')) {
-          console.error('Server returned HTML instead of JSON');
-          throw new Error('Server returned an error page. Please check server logs.');
-        }
-        
-        let errorMsg = `Server returned ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.message || errorMsg;
-        } catch (e) {
-          const errorText = await response.text();
-          errorMsg = errorText.substring(0, 100) || errorMsg;
-        }
-        throw new Error(errorMsg);
-      }
-      
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server response was not JSON. Please check server logs.');
+        throw new Error(`Server returned ${response.status}`);
       }
       
       const data = await response.json();
-      console.log('Admin requests raw data:', data);
       
       if (!data || !Array.isArray(data.requests)) {
-        console.error('Invalid data format received:', data);
         throw new Error('Server returned an invalid data format');
       }
       
-      setRequests(data.requests);
-      console.log(`Successfully set ${data.requests.length} requests in state`);
+      if (isInitial) {
+        setRequests(data.requests);
+        setOffset(data.requests.length);
+      } else {
+        setRequests(prev => [...prev, ...data.requests]);
+        setOffset(prev => prev + data.requests.length);
+      }
+      
+      setTotalRequests(data.total);
+      setHasMore(data.hasMore);
+      
     } catch (error: any) {
       console.error('Error in fetchRequests:', error);
       toast({
@@ -134,55 +128,27 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, isLoading]);
+  }, [toast, isLoading, offset]);
 
   useEffect(() => {
-    fetchRequests();
-    
-    // Safety fallback: if it stays loading too long, try again or force stop
-    const timer = setTimeout(() => {
-      if (isLoading) {
-        console.warn('Loading taking too long, force stopping loading state');
-        setIsLoading(false);
-      }
-    }, 15000); // Increased timeout for slower responses
-    
-    // Polling fallback to ensure data eventually loads even if initial fetch failed silently
-    const pollInterval = setInterval(() => {
-      // Only poll if we have no requests and are not already loading
-      if (requests.length === 0 && !isLoading) {
-        console.log('Polling for requests...');
-        fetchRequests();
-      }
-    }, 60000); // 1 minute is safer for Atlas free tier
-    
-    return () => {
-      clearTimeout(timer);
-      clearInterval(pollInterval);
-    };
-  }, [fetchRequests, isLoading, requests.length]);
+    fetchRequests(true);
+  }, []);
 
-  // Polling fallback removed to respect user preference for manual refresh
-  /* 
-  useEffect(() => {
-    if (!isServerless) return;
-    
-    const pollInterval = setInterval(() => {
-      fetchRequests();
-    }, 15000); // Poll every 15 seconds
-    
-    return () => clearInterval(pollInterval);
-  }, [isServerless, fetchRequests]);
-  */
+  const loadMore = () => {
+    if (hasMore && !isLoading) {
+      fetchRequests(false);
+    }
+  };
+
+  const pendingCount = requests.filter(r => r.status === 'pending').length;
+  const completedCount = requests.filter(r => r.status === 'completed').length;
+  // Approximation for unique users since we only have partial data
+  const uniqueUsers = new Set(requests.map(r => r.userId)).size;
 
   const filteredRequests = requests.filter(req => 
     req.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     req.employeeId?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const pendingCount = requests.filter(r => r.status === 'pending').length;
-  const completedCount = requests.filter(r => r.status === 'completed').length;
-  const uniqueUsers = new Set(requests.map(r => r.userId)).size;
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !selectedRequest) return;
@@ -334,7 +300,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Requests</p>
-                  <p className="text-2xl font-bold text-foreground" data-testid="text-total-requests">{requests.length}</p>
+                  <p className="text-2xl font-bold text-foreground" data-testid="text-total-requests">{totalRequests}</p>
                 </div>
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
                   <Image className="h-6 w-6 text-white" />
@@ -394,7 +360,7 @@ export default function AdminDashboard() {
           <div className="flex gap-2 w-full md:w-auto">
             <Button 
               variant="outline" 
-              onClick={fetchRequests} 
+              onClick={() => fetchRequests(true)} 
               disabled={isLoading} 
               className="bg-white/80 dark:bg-slate-800/80 backdrop-blur" 
               data-testid="button-refresh"
@@ -527,6 +493,19 @@ export default function AdminDashboard() {
                       </TableCell>
                     </TableRow>
                   ))
+                )}
+                {!isLoading && hasMore && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-6">
+                      <Button 
+                        variant="ghost" 
+                        onClick={loadMore} 
+                        className="text-indigo-600 hover:text-indigo-700 font-medium"
+                      >
+                        Load More Data (10 items)
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>

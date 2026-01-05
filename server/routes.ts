@@ -236,17 +236,22 @@ export async function registerRoutes(
 
   app.get('/api/admin/requests', async (req, res) => {
     try {
-      log('Admin fetching all requests', 'info');
-      const requests = await storage.getAllImageRequests().catch(err => {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      log(`Admin fetching requests - limit: ${limit}, offset: ${offset}`, 'info');
+      
+      const result = await storage.getAllImageRequests(limit, offset).catch(err => {
         log(`Storage error in getAllImageRequests: ${err.message}`, 'error');
         return null;
       });
 
-      if (!requests) {
+      if (!result) {
         return res.status(503).json({ message: 'Database busy, please try again in a moment' });
       }
       
-      log(`Found ${requests.length} total requests in storage`, 'info');
+      const { requests, total } = result;
+      log(`Found ${requests.length} requests out of ${total} total`, 'info');
       
       const formattedRequests = requests.map(r => ({
         id: r._id?.toString(),
@@ -267,7 +272,13 @@ export async function registerRoutes(
       res.header('Pragma', 'no-cache');
       res.header('Expires', '0');
       res.header('Access-Control-Allow-Origin', '*');
-      res.json({ requests: formattedRequests });
+      res.json({ 
+        requests: formattedRequests,
+        total,
+        limit,
+        offset,
+        hasMore: offset + requests.length < total
+      });
     } catch (error: any) {
       log(`Error fetching all requests: ${error.message}`, 'error');
       res.status(500).json({ message: 'Failed to fetch requests', error: error.message });
