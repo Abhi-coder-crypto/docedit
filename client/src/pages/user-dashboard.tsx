@@ -125,13 +125,13 @@ export default function UserDashboard() {
     accept: { 'image/*': [] },
     maxFiles: 1,
     disabled: isUploading,
-    maxSize: 500 * 1024, // 500KB client-side limit
+    maxSize: 1024 * 1024, // 1MB client-side limit
     onDropRejected: (fileRejections) => {
       fileRejections.forEach((rejection) => {
         if (rejection.errors.some(e => e.code === 'file-too-large')) {
           toast({
             title: "File too large",
-            description: "Maximum file size is 500KB. Please compress your image or use a smaller file.",
+            description: "Maximum file size is 1MB. Please compress your image or use a smaller file.",
             variant: "destructive",
           });
         }
@@ -304,7 +304,7 @@ export default function UserDashboard() {
                         {isDragActive ? 'Drop your image here' : 'Upload your image'}
                       </h3>
                       <p className="text-slate-500 max-w-sm mx-auto">
-                        Supports JPG, PNG, and WebP files up to 500KB
+                        Supports JPG, PNG, and WebP files up to 1MB
                       </p>
                     </div>
                     <Button className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90" data-testid="button-select-file">
