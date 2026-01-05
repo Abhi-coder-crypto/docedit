@@ -77,6 +77,7 @@ export default function AdminDashboard() {
   const { isConnected, isServerless } = useWebSocket(handleWebSocketMessage, 'admin');
 
   const fetchRequests = useCallback(async () => {
+    if (isLoading) return; // Prevent concurrent fetches
     setIsLoading(true);
     try {
       console.log('Fetching admin requests...');
@@ -90,23 +91,26 @@ export default function AdminDashboard() {
         }
       });
       
+      const contentType = response.headers.get('content-type');
+      
       if (!response.ok) {
-        // Fallback for cases where the server returns HTML (like a 404 or 500 error page)
-        const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('text/html')) {
           console.error('Server returned HTML instead of JSON');
-          throw new Error('Server returned an error page (HTML). Please check server logs.');
+          throw new Error('Server returned an error page. Please check server logs.');
         }
         
-        const errorText = await response.text();
-        console.error('Server error response:', errorText);
-        throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 100)}`);
+        let errorMsg = `Server returned ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch (e) {
+          const errorText = await response.text();
+          errorMsg = errorText.substring(0, 100) || errorMsg;
+        }
+        throw new Error(errorMsg);
       }
       
-      const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Expected JSON but got:', contentType, text.substring(0, 100));
         throw new Error('Server response was not JSON. Please check server logs.');
       }
       
@@ -118,22 +122,19 @@ export default function AdminDashboard() {
         throw new Error('Server returned an invalid data format');
       }
       
-      const requestsArray = data.requests;
-      setRequests(requestsArray);
-      console.log(`Successfully set ${requestsArray.length} requests in state`);
-      
-      // Force end loading even if state update is batched
-      setIsLoading(false);
+      setRequests(data.requests);
+      console.log(`Successfully set ${data.requests.length} requests in state`);
     } catch (error: any) {
       console.error('Error in fetchRequests:', error);
       toast({
-        title: "Error",
+        title: "Connection Issue",
         description: error.message || 'Failed to fetch requests',
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, isLoading]);
 
   useEffect(() => {
     fetchRequests();

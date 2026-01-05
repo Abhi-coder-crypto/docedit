@@ -237,7 +237,15 @@ export async function registerRoutes(
   app.get('/api/admin/requests', async (req, res) => {
     try {
       log('Admin fetching all requests', 'info');
-      const requests = await storage.getAllImageRequests();
+      const requests = await storage.getAllImageRequests().catch(err => {
+        log(`Storage error in getAllImageRequests: ${err.message}`, 'error');
+        return null;
+      });
+
+      if (!requests) {
+        return res.status(503).json({ message: 'Database busy, please try again in a moment' });
+      }
+      
       log(`Found ${requests.length} total requests in storage`, 'info');
       
       const formattedRequests = requests.map(r => ({
@@ -255,11 +263,10 @@ export async function registerRoutes(
       }));
 
       log(`Returning ${formattedRequests.length} formatted requests to client`, 'info');
-      // Force disable any potential server-side caching
       res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       res.header('Pragma', 'no-cache');
       res.header('Expires', '0');
-      res.header('Access-Control-Allow-Origin', '*'); // Ensure CORS doesn't interfere
+      res.header('Access-Control-Allow-Origin', '*');
       res.json({ requests: formattedRequests });
     } catch (error: any) {
       log(`Error fetching all requests: ${error.message}`, 'error');
