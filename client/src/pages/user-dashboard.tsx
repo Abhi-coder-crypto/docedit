@@ -54,6 +54,25 @@ export default function UserDashboard() {
 
   const { isConnected } = useWebSocket(handleWebSocketMessage);
 
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'image/*': [] },
+    maxFiles: 1,
+    disabled: isUploading,
+    maxSize: 500 * 1024, // 500KB client-side limit
+    onDropRejected: (fileRejections) => {
+      fileRejections.forEach((rejection) => {
+        if (rejection.errors.some(e => e.code === 'file-too-large')) {
+          toast({
+            title: "File too large",
+            description: "Maximum file size is 500KB. Please compress your image or use a smaller file.",
+            variant: "destructive",
+          });
+        }
+      });
+    }
+  });
+
   const fetchRequests = useCallback(async () => {
     if (!user?.id) return;
     
@@ -292,7 +311,7 @@ export default function UserDashboard() {
                         {isDragActive ? 'Drop your image here' : 'Upload your image'}
                       </h3>
                       <p className="text-slate-500 max-w-sm mx-auto">
-                        Supports JPG, PNG, and WebP files up to 10MB
+                        Supports JPG, PNG, and WebP files up to 500KB
                       </p>
                     </div>
                     <Button className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90" data-testid="button-select-file">
