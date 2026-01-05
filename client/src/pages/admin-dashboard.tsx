@@ -126,19 +126,22 @@ export default function AdminDashboard() {
       
     } catch (error: any) {
       console.error('Error in fetchRequests:', error);
-      toast({
-        title: "Connection Issue",
-        description: error.message || 'Failed to fetch requests',
-        variant: "destructive",
-      });
+      // Only show toast for non-aborted requests
+      if (error.name !== 'AbortError') {
+        toast({
+          title: "Connection Issue",
+          description: error.message || 'Failed to fetch requests',
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [toast, isLoading, offset]);
+  }, [toast, offset]); // Removed isLoading from dependencies to prevent infinite loop
 
   useEffect(() => {
     fetchRequests(true);
-  }, []);
+  }, []); // Run once on mount
 
   const loadMore = () => {
     if (hasMore && !isLoading) {

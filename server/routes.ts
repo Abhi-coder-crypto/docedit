@@ -272,7 +272,8 @@ export async function registerRoutes(
       res.header('Pragma', 'no-cache');
       res.header('Expires', '0');
       res.header('Access-Control-Allow-Origin', '*');
-      res.json({ 
+
+      return res.status(200).json({ 
         requests: formattedRequests,
         total,
         limit,
@@ -281,7 +282,9 @@ export async function registerRoutes(
       });
     } catch (error: any) {
       log(`Error fetching all requests: ${error.message}`, 'error');
-      res.status(500).json({ message: 'Failed to fetch requests', error: error.message });
+      if (!res.headersSent) {
+        res.status(500).json({ message: 'Failed to fetch requests', error: error.message });
+      }
     }
   });
 
