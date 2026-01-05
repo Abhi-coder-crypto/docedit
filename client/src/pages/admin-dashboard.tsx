@@ -126,10 +126,12 @@ export default function AdminDashboard() {
     
     // Polling fallback to ensure data eventually loads even if initial fetch failed silently
     const pollInterval = setInterval(() => {
-      if (requests.length === 0) {
+      // Only poll if we have no requests and are not already loading
+      if (requests.length === 0 && !isLoading) {
+        console.log('Polling for requests...');
         fetchRequests();
       }
-    }, 10000);
+    }, 30000); // 30 seconds is safer for Atlas free tier
     
     return () => {
       clearTimeout(timer);

@@ -1,0 +1,426 @@
+ WebSocket connection to 'wss://484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev/vite-hmr?token=N5N2aeqsKov3' failed: 
+createConnection @ client:745
+ [vite] failed to connect to websocket (Error: WebSocket closed without opened.). 
+connect @ client:772
+ [vite] 
+error @ client:809
+client:423 Uncaught (in promise) 
+ Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] connect() called, isServerless: false
+ [WebSocket] Attempting to connect to: wss://484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev/ws
+ Fetching admin requests...
+ WebSocket connected
+ WebSocket message: Object
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+api/admin/requests?t=1767590960523:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767590965609:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767590970610:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767590980605:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767590990616:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591000608:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+api/admin/requests?t=1767591010606:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591054013:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591020604:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591030618:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591064194:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591059138:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+api/admin/requests?t=1767591054030:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591059122:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591040614:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:99
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591064206:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591069610:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+api/admin/requests?t=1767591074081:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ Error in fetchRequests: 
+(anonymous) @ admin-dashboard.tsx?t=1767590895527:85
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+ Fetching admin requests...
+ [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+ [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591074091:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591079608:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:122 Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx:122
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591084613:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591084786:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+api/admin/requests?t=1767591084811:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591090607:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+api/admin/requests?t=1767591094810:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:122 Loading taking too long, retrying...
+(anonymous) @ admin-dashboard.tsx:122
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+requests:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+requests:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+requests:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+requests:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+requests:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+requests:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+admin-dashboard.tsx:105 Error in fetchRequests: Error: Failed to fetch requests
+    at admin-dashboard.tsx:95:15
+(anonymous) @ admin-dashboard.tsx:105
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+admin-dashboard.tsx:82 Fetching admin requests...
+use-websocket.ts:18 [WebSocket] Host: 484641c1-849c-46c9-b81f-a7060560f42b-00-2i56kh890xdo6.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true

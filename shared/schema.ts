@@ -39,6 +39,7 @@ export interface ImageRequest {
 
 // MongoDB connection
 let cachedClient: MongoClient | null = null;
+let connectionPromise: Promise<MongoClient> | null = null;
 
 export async function connectToDatabase() {
   if (cachedClient) {
@@ -49,7 +50,12 @@ export async function connectToDatabase() {
     } catch (e) {
       log('Cached MongoDB connection is dead, reconnecting...', 'mongodb');
       cachedClient = null;
+      connectionPromise = null;
     }
+  }
+
+  if (connectionPromise) {
+    return connectionPromise;
   }
 
   const uri = process.env.MONGODB_URI;
@@ -58,16 +64,33 @@ export async function connectToDatabase() {
   }
 
   log('Connecting to MongoDB...', 'mongodb');
-  const client = new MongoClient(uri, {
-    connectTimeoutMS: 10000,
-    socketTimeoutMS: 45000,
-    serverSelectionTimeoutMS: 10000
-  });
   
-  await client.connect();
-  log('Successfully connected to MongoDB', 'mongodb');
-  cachedClient = client;
-  return client;
+  connectionPromise = (async () => {
+    try {
+      const client = new MongoClient(uri, {
+        connectTimeoutMS: 10000,
+        socketTimeoutMS: 60000,
+        serverSelectionTimeoutMS: 10000,
+        maxPoolSize: 20,
+        minPoolSize: 5,
+        maxIdleTimeMS: 60000,
+        waitQueueTimeoutMS: 10000,
+        retryWrites: true,
+        retryReads: true
+      });
+      
+      await client.connect();
+      log('Successfully connected to MongoDB', 'mongodb');
+      cachedClient = client;
+      return client;
+    } catch (error) {
+      log(`Failed to connect to MongoDB: ${error instanceof Error ? error.message : 'Unknown error'}`, 'mongodb');
+      connectionPromise = null;
+      throw error;
+    }
+  })();
+
+  return connectionPromise;
 }
 
 const log = (message: string, source: string) => {
