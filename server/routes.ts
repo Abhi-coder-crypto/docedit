@@ -14,7 +14,7 @@ const COMMON_PASSWORD = 'duolin';
 // Use memory storage for serverless compatibility (Vercel has read-only filesystem)
 const upload = multer({ 
   storage: multer.memoryStorage(),
-  limits: { fileSize: 500 * 1024 },
+  limits: { fileSize: 1024 * 1024 }, // Set to 1MB as requested
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (allowedTypes.includes(file.mimetype)) {
@@ -24,6 +24,29 @@ const upload = multer({
     }
   }
 });
+
+import { v2 as cloudinary } from 'cloudinary';
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+async function uploadToCloudinary(buffer: Buffer): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: 'bg_remover_portal' },
+      (error, result) => {
+        if (error) return reject(error);
+        if (!result) return reject(new Error('Cloudinary upload failed'));
+        resolve(result.secure_url);
+      }
+    );
+    uploadStream.end(buffer);
+  });
+}
 
 export async function registerRoutes(
   httpServer: Server,
@@ -84,8 +107,9 @@ export async function registerRoutes(
         return res.status(400).json({ message: 'User information is required' });
       }
 
-      // Convert buffer to base64 for cloud storage (works with memory storage)
-      const base64Content = req.file.buffer.toString('base64');
+      // Upload to Cloudinary instead of storing Base64
+      const cloudinaryUrl = await uploadToCloudinary(req.file.buffer);
+      
       const uniqueId = nanoid(10);
       const ext = path.extname(req.file.originalname);
       const generatedFilename = `${Date.now()}-${uniqueId}${ext}`;
@@ -95,8 +119,7 @@ export async function registerRoutes(
         employeeId,
         displayName,
         originalFileName: req.file.originalname,
-        originalFilePath: `uploads/original/${generatedFilename}`,
-        originalFileContent: base64Content,
+        originalFilePath: cloudinaryUrl, // Store URL
         originalContentType: req.file.mimetype,
         status: 'pending',
       });
@@ -118,6 +141,7 @@ export async function registerRoutes(
           id: imageRequest._id?.toString(),
           status: imageRequest.status,
           uploadedAt: imageRequest.uploadedAt,
+          url: cloudinaryUrl,
         }
       });
     } catch (error: any) {
@@ -181,14 +205,19 @@ export async function registerRoutes(
       }
 
       if (!fileContent) {
-        // Fallback to local file if content not in MongoDB
+        // Redirect to Cloudinary URL if available
         const filePath = type === 'original' ? imageRequest.originalFilePath : imageRequest.editedFilePath;
+        if (filePath && filePath.startsWith('http')) {
+          return res.redirect(filePath);
+        }
+        
+        // Fallback to local file
         if (filePath && fs.existsSync(filePath)) {
           return res.download(filePath);
         }
         log(`File content not in database for request ${requestId}, type: ${type}`, 'error');
         return res.status(404).json({ 
-          message: 'This image was uploaded before the storage system was updated. The file content is no longer available. Please re-upload the image.' 
+          message: 'Image file not found.' 
         });
       }
 
@@ -297,16 +326,16 @@ export async function registerRoutes(
         return res.status(400).json({ message: 'No edited image file provided' });
       }
 
-      // Convert buffer to base64 for cloud storage (works with memory storage)
-      const base64Content = req.file.buffer.toString('base64');
+      // Upload to Cloudinary instead of storing Base64
+      const cloudinaryUrl = await uploadToCloudinary(req.file.buffer);
+      
       const uniqueId = nanoid(10);
       const ext = path.extname(req.file.originalname);
       const generatedFilename = `${Date.now()}-${uniqueId}${ext}`;
 
       const updatedRequest = await storage.updateImageRequest(requestId, {
         editedFileName: req.file.originalname,
-        editedFilePath: `uploads/edited/${generatedFilename}`,
-        editedFileContent: base64Content,
+        editedFilePath: cloudinaryUrl, // Store URL
         editedContentType: req.file.mimetype,
         status: 'completed',
         completedAt: new Date(),
@@ -336,6 +365,7 @@ export async function registerRoutes(
           id: updatedRequest._id?.toString(),
           status: updatedRequest.status,
           completedAt: updatedRequest.completedAt,
+          url: cloudinaryUrl,
         }
       });
     } catch (error: any) {
