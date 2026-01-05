@@ -76,7 +76,9 @@ app.use((req, res, next) => {
 
   // Initialize MongoDB collections and indexes
   try {
+    const { initializeDatabase, checkCollectionConsistency } = await import("./db-init");
     await initializeDatabase();
+    await checkCollectionConsistency();
     log("Database initialized successfully");
   } catch (error: any) {
     log(`Database initialization warning: ${error.message}`, "database");

@@ -236,26 +236,34 @@ export async function registerRoutes(
 
   app.get('/api/admin/requests', async (req, res) => {
     try {
+      log('Admin fetching all requests', 'info');
       const requests = await storage.getAllImageRequests();
+      log(`Found ${requests.length} total requests in storage`, 'info');
       
-      res.json({
-        requests: requests.map(r => ({
-          id: r._id?.toString(),
-          userId: r.userId,
-          employeeId: r.employeeId,
-          displayName: r.displayName,
-          originalFileName: r.originalFileName,
-          originalFilePath: r.originalFilePath,
-          editedFileName: r.editedFileName,
-          editedFilePath: r.editedFilePath,
-          status: r.status,
-          uploadedAt: r.uploadedAt,
-          completedAt: r.completedAt,
-        }))
-      });
+      const formattedRequests = requests.map(r => ({
+        id: r._id?.toString(),
+        userId: r.userId,
+        employeeId: r.employeeId,
+        displayName: r.displayName,
+        originalFileName: r.originalFileName,
+        originalFilePath: r.originalFilePath,
+        editedFileName: r.editedFileName,
+        editedFilePath: r.editedFilePath,
+        status: r.status,
+        uploadedAt: r.uploadedAt,
+        completedAt: r.completedAt,
+      }));
+
+      log(`Returning ${formattedRequests.length} formatted requests to client`, 'info');
+      // Force disable any potential server-side caching
+      res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.header('Pragma', 'no-cache');
+      res.header('Expires', '0');
+      res.header('Access-Control-Allow-Origin', '*'); // Ensure CORS doesn't interfere
+      res.json({ requests: formattedRequests });
     } catch (error: any) {
       log(`Error fetching all requests: ${error.message}`, 'error');
-      res.status(500).json({ message: 'Failed to fetch requests' });
+      res.status(500).json({ message: 'Failed to fetch requests', error: error.message });
     }
   });
 

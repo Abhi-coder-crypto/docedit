@@ -79,15 +79,30 @@ export default function AdminDashboard() {
   const fetchRequests = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/admin/requests');
-      const data = await response.json();
+      console.log('Fetching admin requests...');
+      const response = await fetch(`/api/admin/requests?t=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       
-      if (response.ok) {
-        setRequests(data.requests || []);
-      } else {
-        throw new Error(data.message || 'Failed to fetch requests');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Server returned ${response.status}`);
       }
+      
+      const data = await response.json();
+      console.log('Admin requests raw data:', data);
+      
+      const requestsArray = Array.isArray(data.requests) ? data.requests : [];
+      setRequests(requestsArray);
+      console.log(`Successfully set ${requestsArray.length} requests in state`);
     } catch (error: any) {
+      console.error('Error in fetchRequests:', error);
       toast({
         title: "Error",
         description: error.message || 'Failed to fetch requests',
@@ -100,7 +115,27 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchRequests();
-  }, [fetchRequests]);
+    
+    // Safety fallback: if it stays loading too long, try again or force stop
+    const timer = setTimeout(() => {
+      if (isLoading) {
+        console.warn('Loading taking too long, retrying...');
+        fetchRequests();
+      }
+    }, 5000);
+    
+    // Polling fallback to ensure data eventually loads even if initial fetch failed silently
+    const pollInterval = setInterval(() => {
+      if (requests.length === 0) {
+        fetchRequests();
+      }
+    }, 10000);
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(pollInterval);
+    };
+  }, [fetchRequests, isLoading, requests.length]);
 
   // Polling fallback removed to respect user preference for manual refresh
   /* 

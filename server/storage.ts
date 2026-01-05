@@ -93,12 +93,21 @@ export class MongoStorage implements IStorage {
   }
 
   async getAllImageRequests(): Promise<ImageRequest[]> {
-    const db = await getDatabase();
-    const requests = await db.collection<ImageRequest>('image_requests')
-      .find({})
-      .sort({ uploadedAt: -1 })
-      .toArray();
-    return requests;
+    try {
+      const db = await getDatabase();
+      const col = db.collection<ImageRequest>('image_requests');
+      
+      const requests = await col
+        .find({})
+        .sort({ uploadedAt: -1 })
+        .toArray();
+      
+      console.log(`[MongoStorage] getAllImageRequests returning ${requests.length} requests from collection 'image_requests'`);
+      return requests;
+    } catch (error) {
+      console.error('[MongoStorage] Error in getAllImageRequests:', error);
+      throw error;
+    }
   }
 
   async updateImageRequest(id: string, update: Partial<ImageRequest>): Promise<ImageRequest | null> {

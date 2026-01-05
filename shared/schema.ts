@@ -42,7 +42,14 @@ let cachedClient: MongoClient | null = null;
 
 export async function connectToDatabase() {
   if (cachedClient) {
-    return cachedClient;
+    try {
+      // Check if connection is still alive
+      await cachedClient.db('admin').command({ ping: 1 });
+      return cachedClient;
+    } catch (e) {
+      log('Cached MongoDB connection is dead, reconnecting...', 'mongodb');
+      cachedClient = null;
+    }
   }
 
   const uri = process.env.MONGODB_URI;
@@ -50,13 +57,27 @@ export async function connectToDatabase() {
     throw new Error('MONGODB_URI environment variable is not set');
   }
 
-  const client = new MongoClient(uri);
+  log('Connecting to MongoDB...', 'mongodb');
+  const client = new MongoClient(uri, {
+    connectTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+    serverSelectionTimeoutMS: 10000
+  });
+  
   await client.connect();
+  log('Successfully connected to MongoDB', 'mongodb');
   cachedClient = client;
   return client;
 }
 
+const log = (message: string, source: string) => {
+  console.log(`${new Date().toLocaleTimeString()} [${source}] ${message}`);
+};
+
 export async function getDatabase() {
   const client = await connectToDatabase();
-  return client.db('bg_remover_portal');
+  const db = client.db('bg_remover_portal');
+  // Log for debugging to ensure we are using the correct database name
+  console.log(`[Database] Using database: ${db.databaseName}`);
+  return db;
 }
