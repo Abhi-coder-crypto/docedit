@@ -54,25 +54,6 @@ export default function UserDashboard() {
 
   const { isConnected } = useWebSocket(handleWebSocketMessage);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { 'image/*': [] },
-    maxFiles: 1,
-    disabled: isUploading,
-    maxSize: 500 * 1024, // 500KB client-side limit
-    onDropRejected: (fileRejections) => {
-      fileRejections.forEach((rejection) => {
-        if (rejection.errors.some(e => e.code === 'file-too-large')) {
-          toast({
-            title: "File too large",
-            description: "Maximum file size is 500KB. Please compress your image or use a smaller file.",
-            variant: "destructive",
-          });
-        }
-      });
-    }
-  });
-
   const fetchRequests = useCallback(async () => {
     if (!user?.id) return;
     
@@ -144,6 +125,18 @@ export default function UserDashboard() {
     accept: { 'image/*': [] },
     maxFiles: 1,
     disabled: isUploading,
+    maxSize: 500 * 1024, // 500KB client-side limit
+    onDropRejected: (fileRejections) => {
+      fileRejections.forEach((rejection) => {
+        if (rejection.errors.some(e => e.code === 'file-too-large')) {
+          toast({
+            title: "File too large",
+            description: "Maximum file size is 500KB. Please compress your image or use a smaller file.",
+            variant: "destructive",
+          });
+        }
+      });
+    }
   });
 
   const downloadFile = async (requestId: string, type: 'original' | 'edited') => {
