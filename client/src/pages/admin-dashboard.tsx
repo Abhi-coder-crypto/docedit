@@ -91,8 +91,9 @@ export default function AdminDashboard() {
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Server returned ${response.status}`);
+        const errorText = await response.text();
+        console.error('Server error response:', errorText);
+        throw new Error(`Server returned ${response.status}`);
       }
       
       const data = await response.json();
@@ -101,6 +102,9 @@ export default function AdminDashboard() {
       const requestsArray = Array.isArray(data.requests) ? data.requests : [];
       setRequests(requestsArray);
       console.log(`Successfully set ${requestsArray.length} requests in state`);
+      
+      // Force end loading even if state update is batched
+      setIsLoading(false);
     } catch (error: any) {
       console.error('Error in fetchRequests:', error);
       toast({
@@ -108,7 +112,6 @@ export default function AdminDashboard() {
         description: error.message || 'Failed to fetch requests',
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   }, [toast]);
@@ -119,10 +122,10 @@ export default function AdminDashboard() {
     // Safety fallback: if it stays loading too long, try again or force stop
     const timer = setTimeout(() => {
       if (isLoading) {
-        console.warn('Loading taking too long, retrying...');
-        fetchRequests();
+        console.warn('Loading taking too long, force stopping loading state');
+        setIsLoading(false);
       }
-    }, 5000);
+    }, 15000); // Increased timeout for slower responses
     
     // Polling fallback to ensure data eventually loads even if initial fetch failed silently
     const pollInterval = setInterval(() => {
@@ -131,7 +134,7 @@ export default function AdminDashboard() {
         console.log('Polling for requests...');
         fetchRequests();
       }
-    }, 30000); // 30 seconds is safer for Atlas free tier
+    }, 60000); // 1 minute is safer for Atlas free tier
     
     return () => {
       clearTimeout(timer);
