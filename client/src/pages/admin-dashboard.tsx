@@ -91,15 +91,34 @@ export default function AdminDashboard() {
       });
       
       if (!response.ok) {
+        // Fallback for cases where the server returns HTML (like a 404 or 500 error page)
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          console.error('Server returned HTML instead of JSON');
+          throw new Error('Server returned an error page (HTML). Please check server logs.');
+        }
+        
         const errorText = await response.text();
         console.error('Server error response:', errorText);
-        throw new Error(`Server returned ${response.status}`);
+        throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 100)}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Expected JSON but got:', contentType, text.substring(0, 100));
+        throw new Error('Server response was not JSON. Please check server logs.');
       }
       
       const data = await response.json();
       console.log('Admin requests raw data:', data);
       
-      const requestsArray = Array.isArray(data.requests) ? data.requests : [];
+      if (!data || !Array.isArray(data.requests)) {
+        console.error('Invalid data format received:', data);
+        throw new Error('Server returned an invalid data format');
+      }
+      
+      const requestsArray = data.requests;
       setRequests(requestsArray);
       console.log(`Successfully set ${requestsArray.length} requests in state`);
       
