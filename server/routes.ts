@@ -250,8 +250,8 @@ export async function registerRoutes(
         return res.status(503).json({ message: 'Database busy, please try again in a moment' });
       }
       
-      const { requests, total } = result;
-      log(`Found ${requests.length} requests out of ${total} total`, 'info');
+      const { requests, total, uniqueUsers } = result;
+      log(`Found ${requests.length} requests out of ${total} total (uniqueUsers: ${uniqueUsers})`, 'info');
       
       const formattedRequests = requests.map(r => ({
         id: r._id?.toString(),
@@ -276,6 +276,7 @@ export async function registerRoutes(
       return res.status(200).json({ 
         requests: formattedRequests,
         total,
+        uniqueUsers,
         limit,
         offset,
         hasMore: offset + requests.length < total

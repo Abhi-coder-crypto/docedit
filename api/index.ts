@@ -351,6 +351,14 @@ app.get("/api/admin/requests", async (req, res) => {
     const col = db.collection<ImageRequest>("image_requests");
     
     const total = await col.countDocuments({});
+    
+    // Calculate unique users across all requests
+    const uniqueUsersResult = await col.aggregate([
+      { $group: { _id: "$userId" } },
+      { $count: "count" }
+    ]).toArray();
+    const uniqueUsers = uniqueUsersResult[0]?.count || 0;
+
     const requests = await col
       .find({})
       .sort({ uploadedAt: -1 })
@@ -358,7 +366,7 @@ app.get("/api/admin/requests", async (req, res) => {
       .limit(limit)
       .toArray();
 
-    log(`Found ${requests.length} requests out of ${total} total`);
+    log(`Found ${requests.length} requests out of ${total} total (uniqueUsers: ${uniqueUsers})`);
 
     res.json({
       requests: requests.map((r) => ({
@@ -375,6 +383,7 @@ app.get("/api/admin/requests", async (req, res) => {
         completedAt: r.completedAt,
       })),
       total,
+      uniqueUsers,
       limit,
       offset,
       hasMore: offset + requests.length < total

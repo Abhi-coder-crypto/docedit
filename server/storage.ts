@@ -16,7 +16,7 @@ export interface IStorage {
   createImageRequest(request: Omit<ImageRequest, '_id' | 'uploadedAt'>): Promise<ImageRequest>;
   getImageRequestById(id: string): Promise<ImageRequest | null>;
   getImageRequestsByUserId(userId: string): Promise<ImageRequest[]>;
-  getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number }>;
+  getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number, uniqueUsers: number }>;
   updateImageRequest(id: string, update: Partial<ImageRequest>): Promise<ImageRequest | null>;
 }
 
@@ -92,12 +92,19 @@ export class MongoStorage implements IStorage {
     return requests;
   }
 
-  async getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number }> {
+  async getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number, uniqueUsers: number }> {
     try {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
       const total = await col.countDocuments({});
+      
+      // Calculate unique users across all requests
+      const uniqueUsersResult = await col.aggregate([
+        { $group: { _id: "$userId" } },
+        { $count: "count" }
+      ]).toArray();
+      const uniqueUsers = uniqueUsersResult[0]?.count || 0;
       
       let query = col.find({}).sort({ uploadedAt: -1 });
       
@@ -111,8 +118,8 @@ export class MongoStorage implements IStorage {
       
       const requests = await query.toArray();
       
-      console.log(`[MongoStorage] getAllImageRequests returning ${requests.length}/${total} requests (limit: ${limit}, offset: ${offset})`);
-      return { requests, total };
+      console.log(`[MongoStorage] getAllImageRequests returning ${requests.length}/${total} requests (uniqueUsers: ${uniqueUsers}, limit: ${limit}, offset: ${offset})`);
+      return { requests, total, uniqueUsers };
     } catch (error) {
       console.error('[MongoStorage] Error in getAllImageRequests:', error);
       throw error;
