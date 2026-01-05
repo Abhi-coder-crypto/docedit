@@ -111,7 +111,13 @@ export default function AdminDashboard() {
         setRequests(data.requests);
         setOffset(data.requests.length);
       } else {
-        setRequests(prev => [...prev, ...data.requests]);
+        setRequests(prev => {
+          // Filter out any duplicates that might have been added via WebSocket or overlap
+          const newRequests = data.requests.filter(
+            (newReq: any) => !prev.some(existingReq => String(existingReq.id) === String(newReq.id))
+          );
+          return [...prev, ...newRequests];
+        });
         setOffset(prev => prev + data.requests.length);
       }
       
