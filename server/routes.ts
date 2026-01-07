@@ -265,77 +265,68 @@ export async function registerRoutes(
     if (!(global as any).adminCache) (global as any).adminCache = {};
     const cached = (global as any).adminCache[cacheKey];
     
-    // Check if cache is still valid (30 seconds)
-    if (cached && Date.now() - cached.timestamp < 30000) {
+    // Check if cache is still valid (1 minute instead of 30s)
+    if (cached && Date.now() - cached.timestamp < 60000) {
       log(`[cache] Serving admin requests from cache for key: ${cacheKey}`, 'info');
       return res.json(cached.data);
     }
 
-    const maxRetries = 2;
-    let attempt = 0;
-    let result = null;
+    try {
+      // Faster query with focused projection
+      const result = await storage.getAllImageRequests(limit, offset);
+      
+      if (result) {
+        const formattedRequests = result.requests.map((r: any) => ({
+          id: r._id?.toString(),
+          userId: r.userId,
+          employeeId: r.employeeId,
+          displayName: r.displayName,
+          originalFileName: r.originalFileName,
+          originalFilePath: r.originalFilePath,
+          editedFileName: r.editedFileName,
+          editedFilePath: r.editedFilePath,
+          status: r.status,
+          uploadedAt: r.uploadedAt,
+          completedAt: r.completedAt,
+        }));
 
-    while (attempt <= maxRetries && !result) {
-      try {
-        if (attempt > 0) {
-          log(`Retry attempt ${attempt} for admin requests`, 'info');
-        }
+        const responseData = { 
+          requests: formattedRequests,
+          total: result.total,
+          uniqueUsers: result.uniqueUsers,
+          pendingCount: result.pendingCount,
+          completedCount: result.completedCount,
+          limit,
+          offset,
+          hasMore: offset + result.requests.length < result.total
+        };
 
-        // Extended timeout for each attempt
-        const queryPromise = storage.getAllImageRequests(limit, offset);
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Query timeout')), 45000)
-        );
+        // Cache for 60s
+        (global as any).adminCache[cacheKey] = {
+          data: responseData,
+          timestamp: Date.now()
+        };
 
-        result = await Promise.race([queryPromise, timeoutPromise]) as any;
-        
-        if (result) {
-          const formattedRequests = result.requests.map((r: any) => ({
-            id: r._id?.toString(),
-            userId: r.userId,
-            employeeId: r.employeeId,
-            displayName: r.displayName,
-            originalFileName: r.originalFileName,
-            originalFilePath: r.originalFilePath,
-            editedFileName: r.editedFileName,
-            editedFilePath: r.editedFilePath,
-            status: r.status,
-            uploadedAt: r.uploadedAt,
-            completedAt: r.completedAt,
-          }));
-
-          const responseData = { 
-            requests: formattedRequests,
-            total: result.total,
-            uniqueUsers: result.uniqueUsers,
-            pendingCount: result.pendingCount,
-            completedCount: result.completedCount,
-            limit,
-            offset,
-            hasMore: offset + result.requests.length < result.total
-          };
-
-          // Cache for 30s
-          (global as any).adminCache[cacheKey] = {
-            data: responseData,
-            timestamp: Date.now()
-          };
-
-          res.header('Cache-Control', 'public, max-age=30');
-          return res.json(responseData);
-        }
-      } catch (error: any) {
-        log(`Attempt ${attempt} failed: ${error.message}`, 'error');
-        attempt++;
-        if (attempt <= maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-        }
+        res.header('Cache-Control', 'public, max-age=60');
+        return res.json(responseData);
       }
+    } catch (error: any) {
+      log(`Admin requests fetch failed: ${error.message}`, 'error');
+      
+      // If we have stale cache, serve it on error
+      if (cached) {
+        log(`[cache] Serving stale admin requests on error`, 'warn');
+        return res.json(cached.data);
+      }
+      
+      return res.status(500).json({ 
+        message: 'Failed to fetch dashboard data. Please try again.',
+        error: error.message
+      });
     }
 
     return res.status(503).json({ 
-      message: 'The database is persistently slow. Please try again in a few moments.',
-      retryAfter: 5
+      message: 'Service temporarily unavailable'
     });
   });
 
