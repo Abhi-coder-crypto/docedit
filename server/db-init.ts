@@ -13,10 +13,6 @@ export async function initializeDatabase() {
   await imageRequestsCollection.createIndex({ userId: 1 });
   await imageRequestsCollection.createIndex({ status: 1 });
   await imageRequestsCollection.createIndex({ uploadedAt: -1 });
-  await imageRequestsCollection.createIndex({ status: 1, uploadedAt: -1 }); // Compound index for filtered lists
-  await imageRequestsCollection.createIndex({ userId: 1, uploadedAt: -1 }); // Compound index for user history
-  await imageRequestsCollection.createIndex({ employeeId: 1 }); // Index for searching
-  await imageRequestsCollection.createIndex({ displayName: 1 }); // Index for searching
 
   const count = await imageRequestsCollection.countDocuments();
   if (count > 0) {

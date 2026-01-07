@@ -44,59 +44,42 @@ export default function AdminDashboard() {
     const currentOffset = isInitial ? 0 : offset;
     
     try {
-      let success = false;
-      let retryCount = 0;
-      const maxClientRetries = 5;
-
-      while (!success && retryCount < maxClientRetries) {
-        try {
-          const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json'
-            }
-          });
-          
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            if (response.status === 503 && retryCount < maxClientRetries - 1) {
-              retryCount++;
-              await new Promise(r => setTimeout(r, 2000 * retryCount));
-              continue;
-            }
-            throw new Error(`Server returned ${response.status}: ${errorData.message || 'Unknown error'}`);
-          }
-          
-          const data = await response.json();
-          
-          if (isInitial) {
-            setRequests(data.requests);
-            setOffset(data.requests.length);
-          } else {
-            setRequests(prev => {
-              const newRequests = data.requests.filter(
-                (newReq: any) => !prev.some(existingReq => String(existingReq.id) === String(newReq.id))
-              );
-              return [...prev, ...newRequests];
-            });
-            setOffset(prev => prev + data.requests.length);
-          }
-          
-          setTotalRequests(data.total);
-          setStats({
-            total: data.total,
-            pending: data.pendingCount || 0,
-            completed: data.completedCount || 0,
-            users: data.uniqueUsers || 0
-          });
-          setHasMore(data.hasMore);
-          success = true;
-        } catch (err: any) {
-          if (retryCount >= maxClientRetries - 1) throw err;
-          retryCount++;
-          await new Promise(r => setTimeout(r, 2000 * retryCount));
+      const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
         }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Server returned ${response.status}: ${errorData.message || 'Unknown error'}`);
       }
+      
+      const data = await response.json();
+      
+      if (isInitial) {
+        setRequests(data.requests);
+        setOffset(data.requests.length);
+      } else {
+        setRequests(prev => {
+          const newRequests = data.requests.filter(
+            (newReq: any) => !prev.some(existingReq => String(existingReq.id) === String(newReq.id))
+          );
+          return [...prev, ...newRequests];
+        });
+        setOffset(prev => prev + data.requests.length);
+      }
+      
+      setTotalRequests(data.total);
+      setStats({
+        total: data.total,
+        pending: data.pendingCount || 0,
+        completed: data.completedCount || 0,
+        users: data.uniqueUsers || 0
+      });
+      setHasMore(data.hasMore);
+      
     } catch (error: any) {
       if (isInitial) {
         toast({
@@ -112,13 +95,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchRequests(true);
-    
-    // Add a periodic refresh every 60 seconds for background updates
-    const interval = setInterval(() => {
-      fetchRequests(true);
-    }, 60000);
-    
-    return () => clearInterval(interval);
   }, []); 
 
   const loadMore = () => {
