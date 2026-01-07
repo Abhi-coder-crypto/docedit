@@ -9,7 +9,6 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useWebSocket, WSMessage } from "@/hooks/use-websocket";
 
 interface ImageRequest {
   id: string;
@@ -30,29 +29,6 @@ export default function UserDashboard() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  const handleWebSocketMessage = useCallback((message: WSMessage) => {
-    if (message.type === 'image_edited') {
-      const editedRequest = message.data;
-      setRequests(prev => prev.map(req => 
-        req.id === editedRequest.id 
-          ? { 
-              ...req, 
-              status: 'completed' as const,
-              editedFileName: editedRequest.editedFileName,
-              editedFilePath: editedRequest.editedFilePath,
-              completedAt: editedRequest.completedAt,
-            }
-          : req
-      ));
-      toast({
-        title: "Image Ready!",
-        description: `Your image "${editedRequest.originalFileName}" has been edited and is ready for download.`,
-      });
-    }
-  }, [toast]);
-
-  const { isConnected } = useWebSocket(handleWebSocketMessage);
 
   const fetchRequests = useCallback(async () => {
     if (!user?.id) return;
@@ -190,19 +166,6 @@ export default function UserDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full" title={isConnected ? 'Real-time updates active' : 'Reconnecting...'}>
-              {isConnected ? (
-                <>
-                  <Wifi className="h-3.5 w-3.5 text-green-500" />
-                  <span className="text-xs text-green-600 font-medium hidden sm:inline">Live</span>
-                </>
-              ) : (
-                <>
-                  <WifiOff className="h-3.5 w-3.5 text-slate-400 animate-pulse" />
-                  <span className="text-xs text-slate-500 hidden sm:inline">Connecting...</span>
-                </>
-              )}
-            </div>
             <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-xl">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                 {user?.displayName?.charAt(0).toUpperCase()}

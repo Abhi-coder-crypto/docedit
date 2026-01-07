@@ -3,13 +3,10 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { initializeDatabase } from "./db-init";
-import { setupWebSocket } from "./websocket";
 import fs from "fs";
 
 const app = express();
 const httpServer = createServer(app);
-
-setupWebSocket(httpServer);
 
 declare module "http" {
   interface IncomingMessage {

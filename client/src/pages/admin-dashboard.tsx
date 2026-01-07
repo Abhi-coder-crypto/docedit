@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Download, Upload, Search, RefreshCw, Wifi, WifiOff, Image, Clock, CheckCircle, Users } from "lucide-react";
+import { Download, Upload, Search, RefreshCw, Image, Clock, CheckCircle, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useDropzone } from "react-dropzone";
-import { useWebSocket, WSMessage } from "@/hooks/use-websocket";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface ImageRequest {
@@ -36,50 +35,6 @@ export default function AdminDashboard() {
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
   const LIMIT = 10;
-
-  const handleWebSocketMessage = useCallback((message: WSMessage) => {
-    if (message.type === 'new_image_upload') {
-      const newRequest = message.data;
-      setRequests(prev => {
-        const exists = prev.some(req => String(req.id) === String(newRequest.id));
-        if (exists) return prev;
-        return [{
-          id: String(newRequest.id),
-          userId: String(newRequest.userId),
-          employeeId: String(newRequest.employeeId),
-          displayName: newRequest.displayName,
-          originalFileName: newRequest.originalFileName,
-          originalFilePath: newRequest.originalFilePath,
-          status: 'pending' as const,
-          uploadedAt: newRequest.uploadedAt,
-        }, ...prev];
-      });
-      setTotalRequests(prev => prev + 1);
-      toast({
-        title: "New Image Upload",
-        description: `${newRequest.displayName} uploaded "${newRequest.originalFileName}"`,
-      });
-    } else if (message.type === 'image_edited') {
-      const editedRequest = message.data;
-      setRequests(prev => prev.map(req => 
-        String(req.id) === String(editedRequest.id) 
-          ? { 
-              ...req, 
-              status: 'completed' as const, 
-              editedFileName: editedRequest.editedFileName, 
-              editedFilePath: editedRequest.editedFilePath, 
-              completedAt: editedRequest.completedAt 
-            }
-          : req
-      ));
-      toast({
-        title: "Image Edited",
-        description: `Request for "${editedRequest.originalFileName}" has been completed`,
-      });
-    }
-  }, [toast]);
-
-  const { isConnected, isServerless } = useWebSocket(handleWebSocketMessage, 'admin');
 
   const fetchRequests = useCallback(async (isInitial = true) => {
     if (isLoading) return;
@@ -296,28 +251,6 @@ export default function AdminDashboard() {
           </div>
           
           <div className="flex items-center gap-3">
-            <div 
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50" 
-              title={isServerless ? 'Auto-refresh every 15s' : (isConnected ? 'Real-time updates active' : 'Reconnecting...')}
-            >
-              {isServerless ? (
-                <>
-                  <RefreshCw className="h-3.5 w-3.5 text-blue-400" />
-                  <span className="text-xs text-blue-400 hidden sm:inline">Auto-refresh</span>
-                </>
-              ) : isConnected ? (
-                <>
-                  <Wifi className="h-3.5 w-3.5 text-green-400" />
-                  <span className="text-xs text-green-400 hidden sm:inline">Live</span>
-                </>
-              ) : (
-                <>
-                  <WifiOff className="h-3.5 w-3.5 text-slate-400 animate-pulse" />
-                  <span className="text-xs text-slate-400 hidden sm:inline">Connecting...</span>
-                </>
-              )}
-            </div>
-            
             <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-lg bg-slate-800/30">
               <Avatar className="h-8 w-8 border-2 border-indigo-400/50">
                 <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-medium">

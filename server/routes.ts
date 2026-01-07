@@ -7,7 +7,6 @@ import fs from "fs";
 import { nanoid } from "nanoid";
 import { log } from "./index";
 import { sendEditedImageNotification } from "./email";
-import { notifyNewImageUpload, notifyImageEdited } from "./websocket";
 
 const COMMON_PASSWORD = 'duolin';
 
@@ -125,17 +124,6 @@ export async function registerRoutes(
         originalFilePath: cloudinaryUrl, // Store URL
         originalContentType: req.file.mimetype,
         status: 'pending',
-      });
-
-      notifyNewImageUpload({
-        id: imageRequest._id?.toString() || '',
-        userId: imageRequest.userId,
-        employeeId: imageRequest.employeeId,
-        displayName: imageRequest.displayName,
-        originalFileName: imageRequest.originalFileName,
-        originalFilePath: imageRequest.originalFilePath,
-        status: imageRequest.status,
-        uploadedAt: imageRequest.uploadedAt,
       });
 
       res.json({
@@ -362,20 +350,6 @@ export async function registerRoutes(
       if (!updatedRequest) {
         return res.status(404).json({ message: 'Request not found' });
       }
-
-      notifyImageEdited({
-        id: updatedRequest._id?.toString() || '',
-        userId: updatedRequest.userId,
-        employeeId: updatedRequest.employeeId,
-        displayName: updatedRequest.displayName,
-        originalFileName: updatedRequest.originalFileName,
-        originalFilePath: updatedRequest.originalFilePath,
-        editedFileName: updatedRequest.editedFileName || '',
-        editedFilePath: updatedRequest.editedFilePath || '',
-        status: updatedRequest.status,
-        uploadedAt: updatedRequest.uploadedAt,
-        completedAt: updatedRequest.completedAt || new Date(),
-      });
 
       res.json({
         message: 'Edited image uploaded successfully',
