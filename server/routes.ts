@@ -270,24 +270,33 @@ export async function registerRoutes(
 
   app.get('/api/admin/requests', async (req, res) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 10;
+      const limit = Math.min(parseInt(req.query.limit as string) || 10, 50); // Cap limit for safety
       const offset = parseInt(req.query.offset as string) || 0;
       
       log(`Admin fetching requests - limit: ${limit}, offset: ${offset}`, 'info');
       
-      const result = await storage.getAllImageRequests(limit, offset).catch(err => {
-        log(`Storage error in getAllImageRequests: ${err.message}`, 'error');
+      // Use a timeout for the database query to prevent 504 Gateway Timeout on Vercel
+      const queryPromise = storage.getAllImageRequests(limit, offset);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Query timeout')), 8000) // 8 second timeout
+      );
+
+      const result = await Promise.race([queryPromise, timeoutPromise]).catch(err => {
+        log(`Storage error or timeout in getAllImageRequests: ${err.message}`, 'error');
         return null;
-      });
+      }) as any;
 
       if (!result) {
-        return res.status(503).json({ message: 'Database busy, please try again in a moment' });
+        return res.status(503).json({ 
+          message: 'The database is taking too long to respond. This usually happens on serverless platforms when the database is cold. Please try refreshing in a few seconds.',
+          retryAfter: 5
+        });
       }
       
       const { requests, total, uniqueUsers } = result;
-      log(`Found ${requests.length} requests out of ${total} total (uniqueUsers: ${uniqueUsers})`, 'info');
+      log(`Found ${requests.length} requests out of ${total} total`, 'info');
       
-      const formattedRequests = requests.map(r => ({
+      const formattedRequests = requests.map((r: any) => ({
         id: r._id?.toString(),
         userId: r.userId,
         employeeId: r.employeeId,
@@ -301,11 +310,9 @@ export async function registerRoutes(
         completedAt: r.completedAt,
       }));
 
-      log(`Returning ${formattedRequests.length} formatted requests to client`, 'info');
       res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       res.header('Pragma', 'no-cache');
       res.header('Expires', '0');
-      res.header('Access-Control-Allow-Origin', '*');
 
       return res.status(200).json({ 
         requests: formattedRequests,
