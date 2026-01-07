@@ -261,33 +261,26 @@ export async function registerRoutes(
     const offset = parseInt(req.query.offset as string) || 0;
     const cacheKey = `admin_requests_${limit}_${offset}`;
     
-    // Use an object for global cache if it doesn't exist
+    // Check global cache first for speed
     if (!(global as any).adminCache) (global as any).adminCache = {};
     const cached = (global as any).adminCache[cacheKey];
-    
-    // Check if cache is still valid (30 seconds)
     if (cached && Date.now() - cached.timestamp < 30000) {
-      log(`[cache] Serving admin requests from cache for key: ${cacheKey}`, 'info');
       return res.json(cached.data);
     }
 
-    const maxRetries = 2;
-    let attempt = 0;
+    // Persistent retry logic: Keep trying until success
     let result = null;
+    let attempt = 0;
 
-    while (attempt <= maxRetries && !result) {
+    while (!result) {
       try {
-        if (attempt > 0) {
-          log(`Retry attempt ${attempt} for admin requests`, 'info');
+        attempt++;
+        if (attempt > 1) {
+          log(`Retry attempt ${attempt} for admin requests...`, 'info');
         }
 
-        // Extended timeout for each attempt
-        const queryPromise = storage.getAllImageRequests(limit, offset);
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Query timeout')), 45000)
-        );
-
-        result = await Promise.race([queryPromise, timeoutPromise]) as any;
+        // Removed timeout to wait indefinitely for the DB
+        result = await storage.getAllImageRequests(limit, offset);
         
         if (result) {
           const formattedRequests = result.requests.map((r: any) => ({
@@ -315,7 +308,7 @@ export async function registerRoutes(
             hasMore: offset + result.requests.length < result.total
           };
 
-          // Cache for 30s
+          // Cache the successful result
           (global as any).adminCache[cacheKey] = {
             data: responseData,
             timestamp: Date.now()
@@ -325,18 +318,11 @@ export async function registerRoutes(
           return res.json(responseData);
         }
       } catch (error: any) {
-        log(`Attempt ${attempt} failed: ${error.message}`, 'error');
-        attempt++;
-        if (attempt <= maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-        }
+        log(`Error fetching admin requests (attempt ${attempt}): ${error.message}`, 'error');
+        // Wait 2s before retrying to avoid spamming the DB
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
-
-    return res.status(503).json({ 
-      message: 'The database is persistently slow. Please try again in a few moments.',
-      retryAfter: 5
-    });
   });
 
   app.post('/api/admin/upload-edited/:requestId', upload.single('editedImage'), async (req, res) => {
