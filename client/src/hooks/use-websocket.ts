@@ -53,46 +53,53 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    // Use a unique path to avoid conflict with Vite HMR
+    // On Replit dev environment, Vite uses /vite-hmr
+    const wsUrl = `${protocol}//${window.location.host}/api/ws-app`;
     
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
+    try {
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
 
-    ws.onopen = () => {
-      setIsConnected(true);
-      
-      const role = forceRole || user?.role || 'admin';
-      const userId = user?.id || 'admin-' + Date.now();
-      
-      ws.send(JSON.stringify({
-        type: 'register',
-        userId: userId,
-        role: role,
-      }));
-    };
+      ws.onopen = () => {
+        setIsConnected(true);
+        
+        const role = forceRole || user?.role || 'admin';
+        const userId = user?.id || 'admin-' + Date.now();
+        
+        ws.send(JSON.stringify({
+          type: 'register',
+          userId: userId,
+          role: role,
+        }));
+      };
 
-    ws.onmessage = (event) => {
-      try {
-        const message: WSMessage = JSON.parse(event.data);
-        onMessage?.(message);
-      } catch (error) {
-        console.error('[WebSocket] Failed to parse message:', error);
-      }
-    };
+      ws.onmessage = (event) => {
+        try {
+          const message: WSMessage = JSON.parse(event.data);
+          onMessage?.(message);
+        } catch (error) {
+          console.error('[WebSocket] Failed to parse message:', error);
+        }
+      };
 
-    ws.onclose = () => {
-      setIsConnected(false);
-      
-      if (shouldReconnectRef.current) {
-        reconnectTimeoutRef.current = setTimeout(() => {
-          connect();
-        }, 3000);
-      }
-    };
+      ws.onclose = () => {
+        setIsConnected(false);
+        
+        if (shouldReconnectRef.current) {
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+          }, 3000);
+        }
+      };
 
-    ws.onerror = (error) => {
-      console.error('[WebSocket] Error:', error);
-    };
+      ws.onerror = (error) => {
+        // Silently handle connection errors to avoid console noise
+        setIsConnected(false);
+      };
+    } catch (e) {
+      console.error('[WebSocket] Failed to create WebSocket:', e);
+    }
   }, [user, onMessage, forceRole]);
 
   useEffect(() => {

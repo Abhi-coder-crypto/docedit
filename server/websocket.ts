@@ -11,7 +11,7 @@ interface WSClient {
 const clients: Set<WSClient> = new Set();
 
 export function setupWebSocket(httpServer: Server) {
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  const wss = new WebSocketServer({ server: httpServer, path: '/api/ws-app' });
 
   wss.on('connection', (ws) => {
     const client: WSClient = { ws };
