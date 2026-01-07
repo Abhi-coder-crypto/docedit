@@ -278,7 +278,7 @@ export async function registerRoutes(
       // Use a timeout for the database query to prevent 504 Gateway Timeout on Vercel
       const queryPromise = storage.getAllImageRequests(limit, offset);
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Query timeout')), 8000) // 8 second timeout
+        setTimeout(() => reject(new Error('Query timeout')), 15000) // 15 second timeout
       );
 
       const result = await Promise.race([queryPromise, timeoutPromise]).catch(err => {

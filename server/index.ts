@@ -29,6 +29,12 @@ app.use(
 app.use(express.urlencoded({ limit: '50mb', extended: false }));
 
 export function log(message: string, source = "express") {
+  // Only log if it's MongoDB related or an error
+  const isMongoLog = source === "mongodb" || source === "database";
+  const isError = message.toLowerCase().includes("error") || message.toLowerCase().includes("failed");
+
+  if (!isMongoLog && !isError) return;
+
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",

@@ -88,7 +88,6 @@ export default function AdminDashboard() {
     const currentOffset = isInitial ? 0 : offset;
     
     try {
-      console.log(`Fetching admin requests (offset: ${currentOffset}, limit: ${LIMIT})...`);
       const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
         method: 'GET',
         headers: {
@@ -98,7 +97,13 @@ export default function AdminDashboard() {
       });
       
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[AdminDashboard] Fetch failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        throw new Error(`Server returned ${response.status}: ${errorData.message || 'Unknown error'}`);
       }
       
       const data = await response.json();
@@ -125,7 +130,11 @@ export default function AdminDashboard() {
       setHasMore(data.hasMore);
       
     } catch (error: any) {
-      console.error('Error in fetchRequests:', error);
+      console.error('[AdminDashboard] Detailed error in fetchRequests:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       // Silent fail if it's a background fetch or abort
       if (error.name !== 'AbortError' && isInitial) {
         toast({

@@ -97,6 +97,8 @@ export class MongoStorage implements IStorage {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
+      console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
+      
       // Run counts in parallel
       const [total, uniqueUsersResult] = await Promise.all([
         col.countDocuments({}),
@@ -115,9 +117,10 @@ export class MongoStorage implements IStorage {
         .project({ originalFileContent: 0, editedFileContent: 0 }) // Exclude heavy content
         .toArray() as any;
       
+      console.log(`[mongodb] Successfully fetched ${requests.length} requests`);
       return { requests, total, uniqueUsers };
     } catch (error) {
-      console.error('[MongoStorage] Error in getAllImageRequests:', error);
+      console.error('[mongodb] Error in getAllImageRequests:', error);
       throw error;
     }
   }

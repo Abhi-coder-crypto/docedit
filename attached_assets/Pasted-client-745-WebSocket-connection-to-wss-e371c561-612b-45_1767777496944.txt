@@ -1,0 +1,31 @@
+client:745 WebSocket connection to 'wss://e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev/vite-hmr?token=NkoIVSzDhA7-' failed: 
+createConnection @ client:745
+client:772 [vite] failed to connect to websocket (Error: WebSocket closed without opened.). 
+connect @ client:772
+client:809 [vite] Error: WebSocket closed without opened.
+    at WebSocket.<anonymous> (client:423:30)
+error @ client:809
+client:423 Uncaught (in promise) Error: WebSocket closed without opened.
+    at WebSocket.<anonymous> (client:423:30)
+react-dom_client.js?v=7bd10587:20103 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+use-websocket.ts:18 [WebSocket] Host: e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:18 [WebSocket] Host: e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:45 [WebSocket] connect() called, isServerless: false
+use-websocket.ts:64 [WebSocket] Attempting to connect to: wss://e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev/ws
+admin-dashboard.tsx:91 Fetching admin requests (offset: 0, limit: 10)...
+use-websocket.ts:18 [WebSocket] Host: e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:70 WebSocket connected
+use-websocket.ts:86 WebSocket message: Object
+use-websocket.ts:18 [WebSocket] Host: e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+requests:1  Failed to load resource: the server responded with a status of 503 (Service Unavailable)
+admin-dashboard.tsx:128 Error in fetchRequests: Error: Server returned 503
+    at admin-dashboard.tsx:101:15
+(anonymous) @ admin-dashboard.tsx:128
+use-websocket.ts:18 [WebSocket] Host: e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
+use-websocket.ts:18 [WebSocket] Host: e371c561-612b-45a1-a432-48e0b1332d84-00-38k5i7mi2e2t.spock.replit.dev | isVercel: false
+use-websocket.ts:30 [WebSocket] isServerless: false | isReplit: true
