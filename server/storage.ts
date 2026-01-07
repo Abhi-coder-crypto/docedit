@@ -97,25 +97,39 @@ export class MongoStorage implements IStorage {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
-      const requests = await col.find({})
-        .sort({ uploadedAt: -1 })
-        .skip(offset || 0)
-        .limit(limit || 10)
-        .project({ 
-          originalFileContent: 0, 
-          editedFileContent: 0,
-          originalContentType: 0,
-          editedContentType: 0
-        })
-        .maxTimeMS(25000)
-        .toArray();
-
+      console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
+      
+      // Run main queries in parallel
+      const [total, uniqueUsersResult, pendingCount, completedCount, requests] = await Promise.all([
+        col.estimatedDocumentCount(), // Faster for large collections
+        col.aggregate([
+          { $group: { _id: "$userId" } },
+          { $count: "count" }
+        ], { maxTimeMS: 5000 }).toArray(), // Add timeout for aggregation
+        col.countDocuments({ status: 'pending' }, { maxTimeMS: 5000 }),
+        col.countDocuments({ status: 'completed' }, { maxTimeMS: 5000 }),
+        col.find({})
+          .sort({ uploadedAt: -1 })
+          .skip(offset || 0)
+          .limit(limit || 10)
+          .project({ 
+            originalFileContent: 0, 
+            editedFileContent: 0,
+            originalContentType: 0
+          })
+          .maxTimeMS(10000) // 10s timeout for main query
+          .toArray()
+      ]);
+      
+      const uniqueUsers = (uniqueUsersResult as any)[0]?.count || 0;
+      
+      console.log(`[mongodb] Successfully fetched ${requests.length} requests`);
       return { 
         requests: requests as any, 
-        total: 5000,
-        uniqueUsers: 0, 
-        pendingCount: 0, 
-        completedCount: 0
+        total, 
+        uniqueUsers,
+        pendingCount,
+        completedCount
       };
     } catch (error) {
       console.error('[mongodb] Error in getAllImageRequests:', error);

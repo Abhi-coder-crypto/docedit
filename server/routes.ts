@@ -272,11 +272,11 @@ export async function registerRoutes(
     }
 
     try {
-      // Direct storage call with minimal overhead
+      // Faster query with focused projection
       const result = await storage.getAllImageRequests(limit, offset);
       
-      const responseData = { 
-        requests: result.requests.map((r: any) => ({
+      if (result) {
+        const formattedRequests = result.requests.map((r: any) => ({
           id: r._id?.toString(),
           userId: r.userId,
           employeeId: r.employeeId,
@@ -288,23 +288,39 @@ export async function registerRoutes(
           status: r.status,
           uploadedAt: r.uploadedAt,
           completedAt: r.completedAt,
-        })),
-        total: result.total,
-        uniqueUsers: result.uniqueUsers,
-        pendingCount: result.pendingCount,
-        completedCount: result.completedCount,
-        limit,
-        offset,
-        hasMore: offset + result.requests.length < result.total
-      };
+        }));
 
-      // Set Cache-Control for browser and Vercel edge
-      res.header('Cache-Control', 'public, max-age=10, s-maxage=60');
-      return res.json(responseData);
+        const responseData = { 
+          requests: formattedRequests,
+          total: result.total,
+          uniqueUsers: result.uniqueUsers,
+          pendingCount: result.pendingCount,
+          completedCount: result.completedCount,
+          limit,
+          offset,
+          hasMore: offset + result.requests.length < result.total
+        };
+
+        // Cache for 60s
+        (global as any).adminCache[cacheKey] = {
+          data: responseData,
+          timestamp: Date.now()
+        };
+
+        res.header('Cache-Control', 'public, max-age=60');
+        return res.json(responseData);
+      }
     } catch (error: any) {
       log(`Admin requests fetch failed: ${error.message}`, 'error');
+      
+      // If we have stale cache, serve it on error
+      if (cached) {
+        log(`[cache] Serving stale admin requests on error`, 'warn');
+        return res.json(cached.data);
+      }
+      
       return res.status(500).json({ 
-        message: 'Failed to fetch dashboard data',
+        message: 'Failed to fetch dashboard data. Please try again.',
         error: error.message
       });
     }

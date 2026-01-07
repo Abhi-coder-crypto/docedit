@@ -71,13 +71,13 @@ export async function connectToDatabase() {
   connectionPromise = (async () => {
     try {
       const client = new MongoClient(sanitizedUri, {
-        connectTimeoutMS: 30000,
-        socketTimeoutMS: 45000,
-        serverSelectionTimeoutMS: 30000,
-        maxPoolSize: 10,
-        minPoolSize: 1,
-        maxIdleTimeMS: 30000,
-        waitQueueTimeoutMS: 10000,
+        connectTimeoutMS: 15000,
+        socketTimeoutMS: 60000,
+        serverSelectionTimeoutMS: 15000,
+        maxPoolSize: 50,
+        minPoolSize: 10,
+        maxIdleTimeMS: 60000,
+        waitQueueTimeoutMS: 15000,
         retryWrites: true,
         retryReads: true
       });

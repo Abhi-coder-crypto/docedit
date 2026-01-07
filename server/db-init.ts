@@ -10,14 +10,14 @@ export async function initializeDatabase() {
   await usersCollection.createIndex({ employeeId: 1 }, { unique: true, sparse: true });
 
   const imageRequestsCollection = db.collection('image_requests');
-  await imageRequestsCollection.createIndex({ uploadedAt: -1 });
   await imageRequestsCollection.createIndex({ userId: 1 });
   await imageRequestsCollection.createIndex({ status: 1 });
-  
-  // Ensure we don't have a massive amount of data in one document
-  // (Index for fast access)
-  console.log('[mongodb] Indexes verified');
+  await imageRequestsCollection.createIndex({ uploadedAt: -1 });
 
+  const count = await imageRequestsCollection.countDocuments();
+  if (count > 0) {
+    const allCollections = await db.listCollections().toArray();
+  }
 }
 
 export async function checkCollectionConsistency() {
