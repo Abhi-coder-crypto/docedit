@@ -163,10 +163,10 @@ export default function AdminDashboard() {
     if (acceptedFiles.length === 0 || !selectedRequest) return;
 
     const file = acceptedFiles[0];
-    if (file.size > 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Maximum file size is 1MB. Please compress the edited image.",
+        description: "Maximum file size is 5MB. Please compress the edited image.",
         variant: "destructive",
       });
       return;
@@ -212,13 +212,13 @@ export default function AdminDashboard() {
     accept: { 'image/*': [] },
     maxFiles: 1,
     disabled: isUploading,
-    maxSize: 1024 * 1024,
+    maxSize: 5 * 1024 * 1024,
     onDropRejected: (fileRejections) => {
       fileRejections.forEach((rejection) => {
         if (rejection.errors.some(e => e.code === 'file-too-large')) {
           toast({
             title: "File too large",
-            description: "Maximum file size for edited images is 1MB. Please compress before uploading.",
+            description: "Maximum file size for edited images is 5MB. Please compress before uploading.",
             variant: "destructive",
           });
         }
