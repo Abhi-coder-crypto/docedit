@@ -261,67 +261,73 @@ export async function registerRoutes(
     const offset = parseInt(req.query.offset as string) || 0;
     const cacheKey = `admin_requests_${limit}_${offset}`;
     
-    // Check global cache first for speed
+    // Check global cache first for speed (crucial for Vercel 30s limit)
     if (!(global as any).adminCache) (global as any).adminCache = {};
     const cached = (global as any).adminCache[cacheKey];
     if (cached && Date.now() - cached.timestamp < 30000) {
+      log(`[cache] Serving from cache to avoid timeout for key: ${cacheKey}`, 'info');
       return res.json(cached.data);
     }
 
-    // Persistent retry logic: Keep trying until success
-    let result = null;
-    let attempt = 0;
+    // Set a safe timeout slightly less than Vercel's 30s limit
+    // This allows us to return a 504/503 before Vercel kills the function
+    const VERCEL_TIMEOUT = 25000; 
+    const startTime = Date.now();
 
-    while (!result) {
-      try {
-        attempt++;
-        if (attempt > 1) {
-          log(`Retry attempt ${attempt} for admin requests...`, 'info');
-        }
+    try {
+      // Race the database query against the timeout
+      const queryPromise = storage.getAllImageRequests(limit, offset);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Vercel-safe timeout reached')), VERCEL_TIMEOUT)
+      );
 
-        // Removed timeout to wait indefinitely for the DB
-        result = await storage.getAllImageRequests(limit, offset);
-        
-        if (result) {
-          const formattedRequests = result.requests.map((r: any) => ({
-            id: r._id?.toString(),
-            userId: r.userId,
-            employeeId: r.employeeId,
-            displayName: r.displayName,
-            originalFileName: r.originalFileName,
-            originalFilePath: r.originalFilePath,
-            editedFileName: r.editedFileName,
-            editedFilePath: r.editedFilePath,
-            status: r.status,
-            uploadedAt: r.uploadedAt,
-            completedAt: r.completedAt,
-          }));
+      const result = await Promise.race([queryPromise, timeoutPromise]) as any;
+      
+      if (result) {
+        const formattedRequests = result.requests.map((r: any) => ({
+          id: r._id?.toString(),
+          userId: r.userId,
+          employeeId: r.employeeId,
+          displayName: r.displayName,
+          originalFileName: r.originalFileName,
+          originalFilePath: r.originalFilePath,
+          editedFileName: r.editedFileName,
+          editedFilePath: r.editedFilePath,
+          status: r.status,
+          uploadedAt: r.uploadedAt,
+          completedAt: r.completedAt,
+        }));
 
-          const responseData = { 
-            requests: formattedRequests,
-            total: result.total,
-            uniqueUsers: result.uniqueUsers,
-            pendingCount: result.pendingCount,
-            completedCount: result.completedCount,
-            limit,
-            offset,
-            hasMore: offset + result.requests.length < result.total
-          };
+        const responseData = { 
+          requests: formattedRequests,
+          total: result.total,
+          uniqueUsers: result.uniqueUsers,
+          pendingCount: result.pendingCount,
+          completedCount: result.completedCount,
+          limit,
+          offset,
+          hasMore: offset + result.requests.length < result.total
+        };
 
-          // Cache the successful result
-          (global as any).adminCache[cacheKey] = {
-            data: responseData,
-            timestamp: Date.now()
-          };
+        // Cache the successful result
+        (global as any).adminCache[cacheKey] = {
+          data: responseData,
+          timestamp: Date.now()
+        };
 
-          res.header('Cache-Control', 'public, max-age=30');
-          return res.json(responseData);
-        }
-      } catch (error: any) {
-        log(`Error fetching admin requests (attempt ${attempt}): ${error.message}`, 'error');
-        // Wait 2s before retrying to avoid spamming the DB
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        res.header('Cache-Control', 'public, max-age=30');
+        return res.json(responseData);
       }
+    } catch (error: any) {
+      log(`Admin fetch error: ${error.message}`, 'error');
+      // If we hit our internal timeout, return 504 so the frontend can retry
+      if (error.message === 'Vercel-safe timeout reached') {
+        return res.status(504).json({ 
+          message: 'Database query taking too long. Retrying...',
+          retryAfter: 1 
+        });
+      }
+      return res.status(500).json({ message: 'Internal server error' });
     }
   });
 
