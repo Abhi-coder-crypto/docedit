@@ -99,37 +99,35 @@ export class MongoStorage implements IStorage {
       
       console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
       
-      // Run main queries in parallel
-      const [total, uniqueUsersResult, pendingCount, completedCount, requests] = await Promise.all([
-        col.estimatedDocumentCount(), // Faster for large collections
-        col.aggregate([
-          { $group: { _id: "$userId" } },
-          { $count: "count" }
-        ], { maxTimeMS: 5000 }).toArray(), // Add timeout for aggregation
-        col.countDocuments({ status: 'pending' }, { maxTimeMS: 5000 }),
-        col.countDocuments({ status: 'completed' }, { maxTimeMS: 5000 }),
-        col.find({})
-          .sort({ uploadedAt: -1 })
-          .skip(offset || 0)
-          .limit(limit || 10)
-          .project({ 
-            originalFileContent: 0, 
-            editedFileContent: 0,
-            originalContentType: 0
-          })
-          .maxTimeMS(10000) // 10s timeout for main query
-          .toArray()
-      ]);
+      // Simple finds are faster than counts on large collections
+      // Using a shorter timeout and estimated count
+      const requestsPromise = col.find({})
+        .sort({ uploadedAt: -1 })
+        .skip(offset || 0)
+        .limit(limit || 10)
+        .project({ 
+          originalFileContent: 0, 
+          editedFileContent: 0,
+          originalContentType: 0,
+          editedContentType: 0
+        })
+        .maxTimeMS(5000)
+        .toArray();
+
+      const totalPromise = col.estimatedDocumentCount();
       
-      const uniqueUsers = (uniqueUsersResult as any)[0]?.count || 0;
+      const [requests, total] = await Promise.all([requestsPromise, totalPromise]);
       
+      // Calculate other stats from the current page if DB is slow, or skip them
+      // In serverless, we want to return as fast as possible
       console.log(`[mongodb] Successfully fetched ${requests.length} requests`);
+      
       return { 
         requests: requests as any, 
         total, 
-        uniqueUsers,
-        pendingCount,
-        completedCount
+        uniqueUsers: 0, // Simplified for performance
+        pendingCount: 0, 
+        completedCount: 0
       };
     } catch (error) {
       console.error('[mongodb] Error in getAllImageRequests:', error);
