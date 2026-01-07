@@ -97,29 +97,22 @@ export class MongoStorage implements IStorage {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
-      // EXTREMELY AGGRESSIVE: No sort, no count, no projection of everything but ID/Paths
       const requests = await col.find({})
+        .sort({ uploadedAt: -1 })
         .skip(offset || 0)
         .limit(limit || 10)
         .project({ 
-          _id: 1,
-          userId: 1,
-          employeeId: 1,
-          displayName: 1,
-          originalFileName: 1,
-          originalFilePath: 1,
-          editedFileName: 1,
-          editedFilePath: 1,
-          status: 1,
-          uploadedAt: 1,
-          completedAt: 1
+          originalFileContent: 0, 
+          editedFileContent: 0,
+          originalContentType: 0,
+          editedContentType: 0
         })
-        .maxTimeMS(1000)
+        .maxTimeMS(25000)
         .toArray();
 
       return { 
         requests: requests as any, 
-        total: 5000, // Static high number to enable pagination without counting
+        total: 5000,
         uniqueUsers: 0, 
         pendingCount: 0, 
         completedCount: 0
