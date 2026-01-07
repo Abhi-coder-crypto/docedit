@@ -49,7 +49,7 @@ expertMode = true
 [userenv]
 
 [userenv.shared]
-MONGODB_URI = "mongodb+srv://abhijeet18012001_db_user:r4FAUy153@cluster0.abcde.mongodb.net/bg_remover_portal?retryWrites=true&w=majority"
+MONGODB_URI = "mongodb+srv://abhijeet18012001_db_user:r4FAUy153ZLzfQdu@document.vrjp2pc.mongodb.net/?appName=Document"
 GMAIL_APP_PASSWORD = "uszzekqrdvpfvszh"
 GMAIL_USER = "abhijeet18012001@gmail.com"
 CLOUDINARY_API_KEY = "154853841235429"
