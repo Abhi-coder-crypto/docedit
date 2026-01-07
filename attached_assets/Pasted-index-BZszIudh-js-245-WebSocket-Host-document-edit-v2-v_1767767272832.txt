@@ -1,0 +1,59 @@
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] connect() called, isServerless: true
+index-BZszIudh.js:245 [WebSocket] Skipping WebSocket connection on serverless platform
+index-BZszIudh.js:249 Fetching admin requests (offset: 0, limit: 10)...
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+api/images/download-by-id/695dfae85c0b87e042cc8da9/edited:1  Failed to load resource: the server responded with a status of 404 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+api/images/download-by-id/695dfae85c0b87e042cc8da9/edited:1  Failed to load resource: the server responded with a status of 404 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+api/images/download-by-id/695dfae85c0b87e042cc8da9/edited:1  Failed to load resource: the server responded with a status of 404 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:249 Fetching admin requests (offset: 10, limit: 10)...
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:249 Fetching admin requests (offset: 20, limit: 10)...
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:249 Fetching admin requests (offset: 30, limit: 10)...
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:249 Fetching admin requests (offset: 40, limit: 10)...
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+api/images/download-by-id/695dfae85c0b87e042cc8da9/edited:1  Failed to load resource: the server responded with a status of 404 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+api/images/download-by-id/695dfae85c0b87e042cc8da9/original:1  Failed to load resource: the server responded with a status of 404 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+api/images/download-by-id/695dfae85c0b87e042cc8da9/edited:1  Failed to load resource: the server responded with a status of 404 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false

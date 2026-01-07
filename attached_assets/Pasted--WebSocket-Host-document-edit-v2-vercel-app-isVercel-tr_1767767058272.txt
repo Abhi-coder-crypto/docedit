@@ -1,0 +1,141 @@
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] connect() called, isServerless: true
+ [WebSocket] Skipping WebSocket connection on serverless platform
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+ [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+ [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+/api/images/upload:1  Failed to load resource: the server responded with a status of 500 ()
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245  POST https://document-edit-v2.vercel.app/api/images/upload 500 (Internal Server Error)
+D @ index-BZszIudh.js:245
+(anonymous) @ index-BZszIudh.js:196
+(anonymous) @ index-BZszIudh.js:196
+Promise.then
+(anonymous) @ index-BZszIudh.js:196
+(anonymous) @ index-BZszIudh.js:194
+(anonymous) @ index-BZszIudh.js:194
+Ky @ index-BZszIudh.js:48
+(anonymous) @ index-BZszIudh.js:48
+tv @ index-BZszIudh.js:48
+gf @ index-BZszIudh.js:48
+Rf @ index-BZszIudh.js:49
+hC @ index-BZszIudh.js:49
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false
+index-BZszIudh.js:245 [WebSocket] Host: document-edit-v2.vercel.app | isVercel: true
+index-BZszIudh.js:245 [WebSocket] isServerless: true | isReplit: false

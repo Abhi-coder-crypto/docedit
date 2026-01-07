@@ -14,7 +14,10 @@ const COMMON_PASSWORD = 'duolin';
 // Use memory storage for serverless compatibility (Vercel has read-only filesystem)
 const upload = multer({ 
   storage: multer.memoryStorage(),
-  limits: { fileSize: 1024 * 1024 }, // Set to 1MB as requested
+  limits: { 
+    fileSize: 5 * 1024 * 1024, // Increased to 5MB for buffer room
+    fieldSize: 5 * 1024 * 1024 
+  },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (allowedTypes.includes(file.mimetype)) {
