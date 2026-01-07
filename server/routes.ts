@@ -261,30 +261,29 @@ export async function registerRoutes(
     const offset = parseInt(req.query.offset as string) || 0;
     const cacheKey = `admin_requests_${limit}_${offset}`;
     
-    // Use an object for global cache if it doesn't exist
+    // Check global cache
     if (!(global as any).adminCache) (global as any).adminCache = {};
     const cached = (global as any).adminCache[cacheKey];
-    
-    // Check if cache is still valid (30 seconds)
     if (cached && Date.now() - cached.timestamp < 30000) {
       log(`[cache] Serving admin requests from cache for key: ${cacheKey}`, 'info');
       return res.json(cached.data);
     }
 
-    const maxRetries = 2;
+    // Aggressive retry logic for slow DB
+    const maxRetries = 10; // Increased to 10 retries
     let attempt = 0;
     let result = null;
 
-    while (attempt <= maxRetries && !result) {
+    while (attempt < maxRetries && !result) {
       try {
         if (attempt > 0) {
-          log(`Retry attempt ${attempt} for admin requests`, 'info');
+          log(`Retry attempt ${attempt}/${maxRetries} for admin requests`, 'info');
         }
 
-        // Extended timeout for each attempt
+        // Long timeout for each attempt
         const queryPromise = storage.getAllImageRequests(limit, offset);
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Query timeout')), 45000)
+          setTimeout(() => reject(new Error('Query timeout')), 60000) // Increased to 60s
         );
 
         result = await Promise.race([queryPromise, timeoutPromise]) as any;
@@ -327,8 +326,10 @@ export async function registerRoutes(
       } catch (error: any) {
         log(`Attempt ${attempt} failed: ${error.message}`, 'error');
         attempt++;
-        if (attempt <= maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        if (attempt < maxRetries) {
+          // Faster initial retries, then back off
+          const delay = attempt < 3 ? 500 : 2000;
+          await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
     }
