@@ -4,6 +4,15 @@ import multer from "multer";
 import path from "path";
 import nodemailer from "nodemailer";
 
+// Vercel config for body parser limits
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "50mb",
+    },
+  },
+};
+
 const app = express();
 
 app.use(express.json({ limit: "50mb" }));
