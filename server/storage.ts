@@ -97,35 +97,30 @@ export class MongoStorage implements IStorage {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
-      console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
-      
-      // Simple finds are faster than counts on large collections
-      // Using a shorter timeout and estimated count
-      const requestsPromise = col.find({})
-        .sort({ uploadedAt: -1 })
+      // EXTREMELY AGGRESSIVE: No sort, no count, no projection of everything but ID/Paths
+      const requests = await col.find({})
         .skip(offset || 0)
         .limit(limit || 10)
         .project({ 
-          originalFileContent: 0, 
-          editedFileContent: 0,
-          originalContentType: 0,
-          editedContentType: 0
+          _id: 1,
+          userId: 1,
+          employeeId: 1,
+          displayName: 1,
+          originalFileName: 1,
+          originalFilePath: 1,
+          editedFileName: 1,
+          editedFilePath: 1,
+          status: 1,
+          uploadedAt: 1,
+          completedAt: 1
         })
-        .maxTimeMS(5000)
+        .maxTimeMS(1000)
         .toArray();
 
-      const totalPromise = col.estimatedDocumentCount();
-      
-      const [requests, total] = await Promise.all([requestsPromise, totalPromise]);
-      
-      // Calculate other stats from the current page if DB is slow, or skip them
-      // In serverless, we want to return as fast as possible
-      console.log(`[mongodb] Successfully fetched ${requests.length} requests`);
-      
       return { 
         requests: requests as any, 
-        total, 
-        uniqueUsers: 0, // Simplified for performance
+        total: 5000, // Static high number to enable pagination without counting
+        uniqueUsers: 0, 
         pendingCount: 0, 
         completedCount: 0
       };
