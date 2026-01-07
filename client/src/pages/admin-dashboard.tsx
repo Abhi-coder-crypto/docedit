@@ -32,12 +32,10 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [totalRequests, setTotalRequests] = useState(0);
+  const [stats, setStats] = useState({ total: 0, pending: 0, completed: 0, users: 0 });
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
   const LIMIT = 10;
-
-  const [totalRequests, setTotalRequests] = useState(0);
-  const [stats, setStats] = useState({ total: 0, pending: 0, completed: 0, users: 0 });
 
   const fetchRequests = useCallback(async (isInitial = true) => {
     if (isLoading) return;
