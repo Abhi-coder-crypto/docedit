@@ -269,13 +269,13 @@ export async function registerRoutes(
       return res.json(cached.data);
     }
 
-    // Set a safe timeout slightly less than Vercel's 30s limit
-    // This allows us to return a 504/503 before Vercel kills the function
-    const VERCEL_TIMEOUT = 25000; 
+    // Aggressive timeout for Vercel (safe margin under 30s)
+    const VERCEL_TIMEOUT = 12000; 
     const startTime = Date.now();
 
     try {
       // Race the database query against the timeout
+      // Also ensure we don't hold the connection if the client disconnects
       const queryPromise = storage.getAllImageRequests(limit, offset);
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Vercel-safe timeout reached')), VERCEL_TIMEOUT)

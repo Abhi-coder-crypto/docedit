@@ -60,8 +60,10 @@ export default function AdminDashboard() {
         
         return await response.json();
       } catch (error) {
-        console.warn('Fetch failed, retrying in 2s...', error);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Fast retry on timeout to keep the connection active
+        const retryDelay = 200; 
+        console.warn(`Fetch failed, retrying in ${retryDelay}ms...`, error);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
         return persistentFetch(); // Recursive retry
       }
     };
