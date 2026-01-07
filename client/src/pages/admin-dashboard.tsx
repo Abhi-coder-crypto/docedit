@@ -95,6 +95,13 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchRequests(true);
+    
+    // Add a periodic refresh every 60 seconds for background updates
+    const interval = setInterval(() => {
+      fetchRequests(true);
+    }, 60000);
+    
+    return () => clearInterval(interval);
   }, []); 
 
   const loadMore = () => {

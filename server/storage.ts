@@ -97,17 +97,26 @@ export class MongoStorage implements IStorage {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
-      console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
-      
-      // Run counts in parallel for performance
-      const [total, uniqueUsersResult, pendingCount, completedCount, requests] = await Promise.all([
-        col.countDocuments({}),
+      const [stats, requests] = await Promise.all([
         col.aggregate([
-          { $group: { _id: "$userId" } },
-          { $count: "count" }
-        ]).toArray(),
-        col.countDocuments({ status: 'pending' }),
-        col.countDocuments({ status: 'completed' }),
+          {
+            $facet: {
+              total: [{ $count: "count" }],
+              uniqueUsers: [
+                { $group: { _id: "$userId" } },
+                { $count: "count" }
+              ],
+              pending: [
+                { $match: { status: 'pending' } },
+                { $count: "count" }
+              ],
+              completed: [
+                { $match: { status: 'completed' } },
+                { $count: "count" }
+              ]
+            }
+          }
+        ], { allowDiskUse: true }).toArray(),
         col.find({})
           .sort({ uploadedAt: -1 })
           .skip(offset || 0)
@@ -115,21 +124,27 @@ export class MongoStorage implements IStorage {
           .project({ 
             originalFileContent: 0, 
             editedFileContent: 0,
-            // Only fetch what we need for the list
-            originalContentType: 0 
+            originalContentType: 0,
+            editedContentType: 0,
+            originalFilePath: 1,
+            editedFilePath: 1,
+            displayName: 1,
+            employeeId: 1,
+            status: 1,
+            uploadedAt: 1,
+            originalFileName: 1
           })
+          .hint({ uploadedAt: -1 }) // Use index hint
           .toArray()
       ]);
       
-      const uniqueUsers = (uniqueUsersResult as any)[0]?.count || 0;
-      
-      console.log(`[mongodb] Successfully fetched ${requests.length} requests`);
+      const s = stats[0];
       return { 
         requests: requests as any, 
-        total, 
-        uniqueUsers,
-        pendingCount,
-        completedCount
+        total: s.total[0]?.count || 0, 
+        uniqueUsers: s.uniqueUsers[0]?.count || 0,
+        pendingCount: s.pending[0]?.count || 0,
+        completedCount: s.completed[0]?.count || 0
       };
     } catch (error) {
       console.error('[mongodb] Error in getAllImageRequests:', error);
