@@ -43,33 +43,20 @@ export default function AdminDashboard() {
     setIsLoading(true);
     const currentOffset = isInitial ? 0 : offset;
     
-    // Helper for persistent fetching
-    const persistentFetch = async (): Promise<any> => {
-      try {
-        const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Server error ${response.status}: ${errorData.message || 'Unknown'}`);
-        }
-        
-        return await response.json();
-      } catch (error) {
-        // Fast retry on timeout to keep the connection active
-        const retryDelay = 200; 
-        console.warn(`Fetch failed, retrying in ${retryDelay}ms...`, error);
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
-        return persistentFetch(); // Recursive retry
-      }
-    };
-    
     try {
-      const data = await persistentFetch();
+      const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Server returned ${response.status}: ${errorData.message || 'Unknown error'}`);
+      }
+      
+      const data = await response.json();
       
       if (isInitial) {
         setRequests(data.requests);
@@ -94,7 +81,6 @@ export default function AdminDashboard() {
       setHasMore(data.hasMore);
       
     } catch (error: any) {
-      // This block will rarely be reached due to persistentFetch logic
       if (isInitial) {
         toast({
           title: "Connection Issue",

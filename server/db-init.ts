@@ -13,10 +13,6 @@ export async function initializeDatabase() {
   await imageRequestsCollection.createIndex({ userId: 1 });
   await imageRequestsCollection.createIndex({ status: 1 });
   await imageRequestsCollection.createIndex({ uploadedAt: -1 });
-  
-  // Ensure background counts are optimized
-  console.log('[Database] Ensuring optimized indexes for stats...');
-  await imageRequestsCollection.createIndex({ status: 1, uploadedAt: -1 });
 
   const count = await imageRequestsCollection.countDocuments();
   if (count > 0) {

@@ -99,15 +99,15 @@ export class MongoStorage implements IStorage {
       
       console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
       
-      // Run counts in parallel for performance with aggressive database-level timeouts
+      // Run counts in parallel for performance
       const [total, uniqueUsersResult, pendingCount, completedCount, requests] = await Promise.all([
-        col.countDocuments({}, { maxTimeMS: 8000 }),
+        col.countDocuments({}),
         col.aggregate([
           { $group: { _id: "$userId" } },
           { $count: "count" }
-        ], { maxTimeMS: 8000 }).toArray(),
-        col.countDocuments({ status: 'pending' }, { maxTimeMS: 8000 }),
-        col.countDocuments({ status: 'completed' }, { maxTimeMS: 8000 }),
+        ]).toArray(),
+        col.countDocuments({ status: 'pending' }),
+        col.countDocuments({ status: 'completed' }),
         col.find({})
           .sort({ uploadedAt: -1 })
           .skip(offset || 0)
@@ -115,9 +115,9 @@ export class MongoStorage implements IStorage {
           .project({ 
             originalFileContent: 0, 
             editedFileContent: 0,
+            // Only fetch what we need for the list
             originalContentType: 0 
           })
-          .maxTimeMS(8000)
           .toArray()
       ]);
       
