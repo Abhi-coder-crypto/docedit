@@ -97,28 +97,24 @@ export class MongoStorage implements IStorage {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
-      const total = await col.countDocuments({});
+      // Run counts in parallel
+      const [total, uniqueUsersResult] = await Promise.all([
+        col.countDocuments({}),
+        col.aggregate([
+          { $group: { _id: "$userId" } },
+          { $count: "count" }
+        ]).toArray()
+      ]);
       
-      // Calculate unique users across all requests
-      const uniqueUsersResult = await col.aggregate([
-        { $group: { _id: "$userId" } },
-        { $count: "count" }
-      ]).toArray();
       const uniqueUsers = uniqueUsersResult[0]?.count || 0;
       
-      let query = col.find({}).sort({ uploadedAt: -1 });
+      const requests = await col.find({})
+        .sort({ uploadedAt: -1 })
+        .skip(offset || 0)
+        .limit(limit || 10)
+        .project({ originalFileContent: 0, editedFileContent: 0 }) // Exclude heavy content
+        .toArray() as any;
       
-      if (offset !== undefined) {
-        query = query.skip(offset);
-      }
-      
-      if (limit !== undefined) {
-        query = query.limit(limit);
-      }
-      
-      const requests = await query.toArray();
-      
-      console.log(`[MongoStorage] getAllImageRequests returning ${requests.length}/${total} requests (uniqueUsers: ${uniqueUsers}, limit: ${limit}, offset: ${offset})`);
       return { requests, total, uniqueUsers };
     } catch (error) {
       console.error('[MongoStorage] Error in getAllImageRequests:', error);

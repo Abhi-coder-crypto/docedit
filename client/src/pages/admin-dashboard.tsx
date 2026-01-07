@@ -112,7 +112,7 @@ export default function AdminDashboard() {
         setOffset(data.requests.length);
       } else {
         setRequests(prev => {
-          // Filter out any duplicates that might have been added via WebSocket or overlap
+          // Filter out any duplicates
           const newRequests = data.requests.filter(
             (newReq: any) => !prev.some(existingReq => String(existingReq.id) === String(newReq.id))
           );
@@ -126,8 +126,8 @@ export default function AdminDashboard() {
       
     } catch (error: any) {
       console.error('Error in fetchRequests:', error);
-      // Only show toast for non-aborted requests
-      if (error.name !== 'AbortError') {
+      // Silent fail if it's a background fetch or abort
+      if (error.name !== 'AbortError' && isInitial) {
         toast({
           title: "Connection Issue",
           description: error.message || 'Failed to fetch requests',
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, offset]); // Removed isLoading from dependencies to prevent infinite loop
+  }, [toast, offset, LIMIT]); // Fixed dependencies and isLoading check
 
   useEffect(() => {
     fetchRequests(true);

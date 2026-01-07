@@ -17,7 +17,7 @@ export async function initializeDatabase() {
   await imageRequestsCollection.createIndex({ userId: 1 });
   await imageRequestsCollection.createIndex({ status: 1 });
   await imageRequestsCollection.createIndex({ uploadedAt: -1 });
-  console.log("Created indexes on image_requests (userId, status, uploadedAt)");
+  console.log("Created separate indexes on image_requests (userId, status, uploadedAt) for faster filtering");
 
   const count = await imageRequestsCollection.countDocuments();
   console.log(`Current image_requests count in collection 'image_requests': ${count}`);
