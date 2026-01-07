@@ -211,16 +211,18 @@ export async function registerRoutes(
         // Redirect to Cloudinary URL if available
         const filePath = type === 'original' ? imageRequest.originalFilePath : imageRequest.editedFilePath;
         if (filePath && filePath.startsWith('http')) {
+          log(`Redirecting to Cloudinary URL for request ${requestId}, type: ${type}: ${filePath}`, 'info');
           return res.redirect(filePath);
         }
         
         // Fallback to local file
-        if (filePath && fs.existsSync(filePath)) {
+        if (filePath && !filePath.startsWith('http') && fs.existsSync(filePath)) {
+          log(`Downloading local file for request ${requestId}, type: ${type}: ${filePath}`, 'info');
           return res.download(filePath);
         }
-        log(`File content not in database for request ${requestId}, type: ${type}`, 'error');
+        log(`Image file not found for request ${requestId}, type: ${type}. DB path: ${filePath}`, 'error');
         return res.status(404).json({ 
-          message: 'Image file not found.' 
+          message: 'This image was uploaded before the storage system was updated. The file content is no longer available. Please re-upload the image.' 
         });
       }
 
