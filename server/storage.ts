@@ -111,7 +111,7 @@ export class MongoStorage implements IStorage {
         col.find({})
           .sort({ uploadedAt: -1 })
           .skip(offset || 0)
-          .limit(limit || 10)
+          .limit(limit || 5)
           .project({ 
             originalFileContent: 0, 
             editedFileContent: 0,
