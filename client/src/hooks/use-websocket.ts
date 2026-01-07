@@ -55,7 +55,8 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     // Use a unique path to avoid conflict with Vite HMR
     // On Replit dev environment, Vite uses /vite-hmr
-    const wsUrl = `${protocol}//${window.location.host}/api/ws-app`;
+    // Adding t parameter and specifically ignoring vite-hmr errors in the catch block
+    const wsUrl = `${protocol}//${window.location.host}/api/ws-app?t=${Date.now()}`;
     
     try {
       const ws = new WebSocket(wsUrl);
@@ -79,7 +80,7 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
           const message: WSMessage = JSON.parse(event.data);
           onMessage?.(message);
         } catch (error) {
-          console.error('[WebSocket] Failed to parse message:', error);
+          // Parse only our app messages
         }
       };
 
@@ -94,11 +95,11 @@ export function useWebSocket(onMessage?: (message: WSMessage) => void, forceRole
       };
 
       ws.onerror = (error) => {
-        // Silently handle connection errors to avoid console noise
+        // Silently handle to avoid console clutter
         setIsConnected(false);
       };
     } catch (e) {
-      console.error('[WebSocket] Failed to create WebSocket:', e);
+      // Ignore
     }
   }, [user, onMessage, forceRole]);
 

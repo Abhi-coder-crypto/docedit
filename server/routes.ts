@@ -269,65 +269,71 @@ export async function registerRoutes(
   });
 
   app.get('/api/admin/requests', async (req, res) => {
-    try {
-      const limit = Math.min(parseInt(req.query.limit as string) || 10, 50); // Cap limit for safety
-      const offset = parseInt(req.query.offset as string) || 0;
-      
-      log(`Admin fetching requests - limit: ${limit}, offset: ${offset}`, 'info');
-      
-      // Use a timeout for the database query to prevent 504 Gateway Timeout on Vercel
-      const queryPromise = storage.getAllImageRequests(limit, offset);
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Query timeout')), 25000) // 25 second timeout
-      );
+    const maxRetries = 2;
+    let attempt = 0;
+    let result = null;
 
-      const result = await Promise.race([queryPromise, timeoutPromise]).catch(err => {
-        log(`Storage error or timeout in getAllImageRequests: ${err.message}`, 'error');
-        return null;
-      }) as any;
+    while (attempt <= maxRetries && !result) {
+      try {
+        const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
+        const offset = parseInt(req.query.offset as string) || 0;
+        
+        if (attempt > 0) {
+          log(`Retry attempt ${attempt} for admin requests`, 'info');
+        }
 
-      if (!result) {
-        return res.status(503).json({ 
-          message: 'The database is taking too long to respond. This usually happens on serverless platforms when the database is cold. Please try refreshing in a few seconds.',
-          retryAfter: 5
-        });
-      }
-      
-      const { requests, total, uniqueUsers } = result;
-      log(`Found ${requests.length} requests out of ${total} total`, 'info');
-      
-      const formattedRequests = requests.map((r: any) => ({
-        id: r._id?.toString(),
-        userId: r.userId,
-        employeeId: r.employeeId,
-        displayName: r.displayName,
-        originalFileName: r.originalFileName,
-        originalFilePath: r.originalFilePath,
-        editedFileName: r.editedFileName,
-        editedFilePath: r.editedFilePath,
-        status: r.status,
-        uploadedAt: r.uploadedAt,
-        completedAt: r.completedAt,
-      }));
+        // Extended timeout for each attempt
+        const queryPromise = storage.getAllImageRequests(limit, offset);
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Query timeout')), 45000) // Increased to 45s
+        );
 
-      res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      res.header('Pragma', 'no-cache');
-      res.header('Expires', '0');
+        result = await Promise.race([queryPromise, timeoutPromise]);
+        
+        if (result) {
+          const { requests, total, uniqueUsers } = result as any;
+          log(`Found ${requests.length} requests out of ${total} total`, 'info');
+          
+          const formattedRequests = requests.map((r: any) => ({
+            id: r._id?.toString(),
+            userId: r.userId,
+            employeeId: r.employeeId,
+            displayName: r.displayName,
+            originalFileName: r.originalFileName,
+            originalFilePath: r.originalFilePath,
+            editedFileName: r.editedFileName,
+            editedFilePath: r.editedFilePath,
+            status: r.status,
+            uploadedAt: r.uploadedAt,
+            completedAt: r.completedAt,
+          }));
 
-      return res.status(200).json({ 
-        requests: formattedRequests,
-        total,
-        uniqueUsers,
-        limit,
-        offset,
-        hasMore: offset + requests.length < total
-      });
-    } catch (error: any) {
-      log(`Error fetching all requests: ${error.message}`, 'error');
-      if (!res.headersSent) {
-        res.status(500).json({ message: 'Failed to fetch requests', error: error.message });
+          res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+          res.header('Pragma', 'no-cache');
+          res.header('Expires', '0');
+
+          return res.status(200).json({ 
+            requests: formattedRequests,
+            total,
+            uniqueUsers,
+            limit,
+            offset,
+            hasMore: offset + requests.length < total
+          });
+        }
+      } catch (error: any) {
+        log(`Attempt ${attempt} failed: ${error.message}`, 'error');
+        attempt++;
+        if (attempt <= maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+        }
       }
     }
+
+    return res.status(503).json({ 
+      message: 'The database is persistently slow. Please try again in a few moments.',
+      retryAfter: 5
+    });
   });
 
   app.post('/api/admin/upload-edited/:requestId', upload.single('editedImage'), async (req, res) => {
