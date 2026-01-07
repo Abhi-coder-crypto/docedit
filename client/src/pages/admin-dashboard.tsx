@@ -36,6 +36,9 @@ export default function AdminDashboard() {
   const [offset, setOffset] = useState(0);
   const LIMIT = 10;
 
+  const [totalRequests, setTotalRequests] = useState(0);
+  const [stats, setStats] = useState({ total: 0, pending: 0, completed: 0, users: 0 });
+
   const fetchRequests = useCallback(async (isInitial = true) => {
     if (isLoading) return;
     
@@ -46,33 +49,22 @@ export default function AdminDashboard() {
       const response = await fetch(`/api/admin/requests?limit=${LIMIT}&offset=${currentOffset}&t=${Date.now()}`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
+          'Accept': 'application/json'
         }
       });
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('[AdminDashboard] Fetch failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorData
-        });
         throw new Error(`Server returned ${response.status}: ${errorData.message || 'Unknown error'}`);
       }
       
       const data = await response.json();
-      
-      if (!data || !Array.isArray(data.requests)) {
-        throw new Error('Server returned an invalid data format');
-      }
       
       if (isInitial) {
         setRequests(data.requests);
         setOffset(data.requests.length);
       } else {
         setRequests(prev => {
-          // Filter out any duplicates
           const newRequests = data.requests.filter(
             (newReq: any) => !prev.some(existingReq => String(existingReq.id) === String(newReq.id))
           );
@@ -82,16 +74,16 @@ export default function AdminDashboard() {
       }
       
       setTotalRequests(data.total);
+      setStats({
+        total: data.total,
+        pending: data.pendingCount || 0,
+        completed: data.completedCount || 0,
+        users: data.uniqueUsers || 0
+      });
       setHasMore(data.hasMore);
       
     } catch (error: any) {
-      console.error('[AdminDashboard] Detailed error in fetchRequests:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-      // Silent fail if it's a background fetch or abort
-      if (error.name !== 'AbortError' && isInitial) {
+      if (isInitial) {
         toast({
           title: "Connection Issue",
           description: error.message || 'Failed to fetch requests',
@@ -101,22 +93,17 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, offset, LIMIT]); // Fixed dependencies and isLoading check
+  }, [toast, offset, LIMIT, isLoading]); 
 
   useEffect(() => {
     fetchRequests(true);
-  }, []); // Run once on mount
+  }, []); 
 
   const loadMore = () => {
     if (hasMore && !isLoading) {
       fetchRequests(false);
     }
   };
-
-  const pendingCount = requests.filter(r => r.status === 'pending').length;
-  const completedCount = requests.filter(r => r.status === 'completed').length;
-  // Approximation for unique users since we only have partial data
-  const uniqueUsers = new Set(requests.map(r => r.userId)).size;
 
   const filteredRequests = requests.filter(req => 
     req.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -287,7 +274,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm text-muted-foreground">Pending</p>
-                  <p className="text-2xl font-bold text-amber-600" data-testid="text-pending-count">{pendingCount}</p>
+                  <p className="text-2xl font-bold text-amber-600" data-testid="text-pending-count">{stats.pending}</p>
                 </div>
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
                   <Clock className="h-6 w-6 text-white" />
@@ -301,7 +288,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm text-muted-foreground">Completed</p>
-                  <p className="text-2xl font-bold text-green-600" data-testid="text-completed-count">{completedCount}</p>
+                  <p className="text-2xl font-bold text-green-600" data-testid="text-completed-count">{stats.completed}</p>
                 </div>
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-lg">
                   <CheckCircle className="h-6 w-6 text-white" />
@@ -315,7 +302,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm text-muted-foreground">Unique Users</p>
-                  <p className="text-2xl font-bold text-indigo-600" data-testid="text-unique-users">{uniqueUsers}</p>
+                  <p className="text-2xl font-bold text-indigo-600" data-testid="text-unique-users">{stats.users}</p>
                 </div>
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center shadow-lg">
                   <Users className="h-6 w-6 text-white" />

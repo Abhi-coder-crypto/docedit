@@ -257,15 +257,26 @@ export async function registerRoutes(
   });
 
   app.get('/api/admin/requests', async (req, res) => {
+    const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
+    const offset = parseInt(req.query.offset as string) || 0;
+    const cacheKey = `admin_requests_${limit}_${offset}`;
+    
+    // Use an object for global cache if it doesn't exist
+    if (!(global as any).adminCache) (global as any).adminCache = {};
+    const cached = (global as any).adminCache[cacheKey];
+    
+    // Check if cache is still valid (30 seconds)
+    if (cached && Date.now() - cached.timestamp < 30000) {
+      log(`[cache] Serving admin requests from cache for key: ${cacheKey}`, 'info');
+      return res.json(cached.data);
+    }
+
     const maxRetries = 2;
     let attempt = 0;
     let result = null;
 
     while (attempt <= maxRetries && !result) {
       try {
-        const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
-        const offset = parseInt(req.query.offset as string) || 0;
-        
         if (attempt > 0) {
           log(`Retry attempt ${attempt} for admin requests`, 'info');
         }
@@ -273,16 +284,13 @@ export async function registerRoutes(
         // Extended timeout for each attempt
         const queryPromise = storage.getAllImageRequests(limit, offset);
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Query timeout')), 45000) // Increased to 45s
+          setTimeout(() => reject(new Error('Query timeout')), 45000)
         );
 
-        result = await Promise.race([queryPromise, timeoutPromise]);
+        result = await Promise.race([queryPromise, timeoutPromise]) as any;
         
         if (result) {
-          const { requests, total, uniqueUsers } = result as any;
-          log(`Found ${requests.length} requests out of ${total} total`, 'info');
-          
-          const formattedRequests = requests.map((r: any) => ({
+          const formattedRequests = result.requests.map((r: any) => ({
             id: r._id?.toString(),
             userId: r.userId,
             employeeId: r.employeeId,
@@ -296,24 +304,31 @@ export async function registerRoutes(
             completedAt: r.completedAt,
           }));
 
-          res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-          res.header('Pragma', 'no-cache');
-          res.header('Expires', '0');
-
-          return res.status(200).json({ 
+          const responseData = { 
             requests: formattedRequests,
-            total,
-            uniqueUsers,
+            total: result.total,
+            uniqueUsers: result.uniqueUsers,
+            pendingCount: result.pendingCount,
+            completedCount: result.completedCount,
             limit,
             offset,
-            hasMore: offset + requests.length < total
-          });
+            hasMore: offset + result.requests.length < result.total
+          };
+
+          // Cache for 30s
+          (global as any).adminCache[cacheKey] = {
+            data: responseData,
+            timestamp: Date.now()
+          };
+
+          res.header('Cache-Control', 'public, max-age=30');
+          return res.json(responseData);
         }
       } catch (error: any) {
         log(`Attempt ${attempt} failed: ${error.message}`, 'error');
         attempt++;
         if (attempt <= maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         }
       }
     }

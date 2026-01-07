@@ -92,33 +92,45 @@ export class MongoStorage implements IStorage {
     return requests;
   }
 
-  async getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number, uniqueUsers: number }> {
+  async getAllImageRequests(limit?: number, offset?: number): Promise<{ requests: ImageRequest[], total: number, uniqueUsers: number, pendingCount: number, completedCount: number }> {
     try {
       const db = await getDatabase();
       const col = db.collection<ImageRequest>('image_requests');
       
       console.log(`[mongodb] Fetching image requests: limit=${limit}, offset=${offset}`);
       
-      // Run counts in parallel
-      const [total, uniqueUsersResult] = await Promise.all([
+      // Run counts in parallel for performance
+      const [total, uniqueUsersResult, pendingCount, completedCount, requests] = await Promise.all([
         col.countDocuments({}),
         col.aggregate([
           { $group: { _id: "$userId" } },
           { $count: "count" }
-        ]).toArray()
+        ]).toArray(),
+        col.countDocuments({ status: 'pending' }),
+        col.countDocuments({ status: 'completed' }),
+        col.find({})
+          .sort({ uploadedAt: -1 })
+          .skip(offset || 0)
+          .limit(limit || 10)
+          .project({ 
+            originalFileContent: 0, 
+            editedFileContent: 0,
+            // Only fetch what we need for the list
+            originalContentType: 0 
+          })
+          .toArray()
       ]);
       
-      const uniqueUsers = uniqueUsersResult[0]?.count || 0;
-      
-      const requests = await col.find({})
-        .sort({ uploadedAt: -1 })
-        .skip(offset || 0)
-        .limit(limit || 10)
-        .project({ originalFileContent: 0, editedFileContent: 0 }) // Exclude heavy content
-        .toArray() as any;
+      const uniqueUsers = (uniqueUsersResult as any)[0]?.count || 0;
       
       console.log(`[mongodb] Successfully fetched ${requests.length} requests`);
-      return { requests, total, uniqueUsers };
+      return { 
+        requests: requests as any, 
+        total, 
+        uniqueUsers,
+        pendingCount,
+        completedCount
+      };
     } catch (error) {
       console.error('[mongodb] Error in getAllImageRequests:', error);
       throw error;
