@@ -115,17 +115,7 @@ export class MongoStorage implements IStorage {
           .project({ 
             originalFileContent: 0, 
             editedFileContent: 0,
-            originalContentType: 0,
-            originalFilePath: 1,
-            editedFilePath: 1,
-            status: 1,
-            uploadedAt: 1,
-            completedAt: 1,
-            userId: 1,
-            employeeId: 1,
-            displayName: 1,
-            originalFileName: 1,
-            editedFileName: 1
+            originalContentType: 0
           })
           .maxTimeMS(10000) // 10s timeout for main query
           .toArray()
