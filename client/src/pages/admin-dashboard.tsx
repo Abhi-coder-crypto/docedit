@@ -35,7 +35,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ total: 0, pending: 0, completed: 0, users: 0 });
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
-  const LIMIT = 5;
+  const LIMIT = 10;
 
   const fetchRequests = useCallback(async (isInitial = true) => {
     if (isLoading) return;
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
                         onClick={loadMore} 
                         className="text-indigo-600 hover:text-indigo-700 font-medium"
                       >
-                        Load More Data (5 items)
+                        Load More Data (10 items)
                       </Button>
                     </TableCell>
                   </TableRow>
