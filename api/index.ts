@@ -73,7 +73,7 @@ const COMMON_PASSWORD = "duolin";
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB limit
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1MB limit for both client and admin uploads
   fileFilter: (req, file, cb) => {
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (allowedTypes.includes(file.mimetype)) {

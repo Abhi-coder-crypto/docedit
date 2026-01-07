@@ -15,8 +15,8 @@ const COMMON_PASSWORD = 'duolin';
 const upload = multer({ 
   storage: multer.memoryStorage(),
   limits: { 
-    fileSize: 15 * 1024 * 1024, // Increased to 15MB to accommodate Vercel payload overhead
-    fieldSize: 15 * 1024 * 1024 
+    fileSize: 1 * 1024 * 1024, // 1MB limit for both client and admin uploads
+    fieldSize: 1 * 1024 * 1024 
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];

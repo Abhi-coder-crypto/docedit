@@ -125,13 +125,13 @@ export default function UserDashboard() {
     accept: { 'image/*': [] },
     maxFiles: 1,
     disabled: isUploading,
-    maxSize: 5 * 1024 * 1024, // 5MB client-side limit
+    maxSize: 1 * 1024 * 1024, // 1MB client-side limit
     onDropRejected: (fileRejections) => {
       fileRejections.forEach((rejection) => {
         if (rejection.errors.some(e => e.code === 'file-too-large')) {
           toast({
             title: "File too large",
-            description: "Maximum file size is 5MB. Please compress your image or use a smaller file.",
+            description: "Maximum file size is 1MB. Please compress your image or use a smaller file.",
             variant: "destructive",
           });
         }
